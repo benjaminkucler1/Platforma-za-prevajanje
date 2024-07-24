@@ -22,7 +22,7 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
                 let user = null;
                 const pwHash = await saltAndHashPassword(credentials.password as string);
 
-                user = await getUserFromDb(credentials.email as string, pwHash)
+                user = await getUserFromDb(credentials.email as string, credentials.password as string)
             
                 if (!user) {
                     throw new Error("User not found.")

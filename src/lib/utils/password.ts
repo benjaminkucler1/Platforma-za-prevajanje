@@ -1,13 +1,10 @@
-import bcrypt from 'bcryptjs'
+import argon2 from 'argon2';
 
-const SALT_ROUNDS = 10;
-
-export async function saltAndHashPassword(password: string) {
-    const salt = await bcrypt.genSalt(SALT_ROUNDS);
-    const hashedPass = await bcrypt.hash(password, salt);
-    return hashedPass;
+export async function saltAndHashPassword(password: string): Promise<string> {
+  const hashedPassword = await argon2.hash(password);
+  return hashedPassword;
 }
 
-export async function comparePassword(password: string, hashedPass: string) {
-    return bcrypt.compare(password, hashedPass);
+export async function comparePassword(password: string, hashedPassword: string): Promise<boolean> {
+  return argon2.verify(hashedPassword, password);
 }

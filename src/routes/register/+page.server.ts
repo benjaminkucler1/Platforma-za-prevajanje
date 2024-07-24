@@ -33,7 +33,7 @@ export const actions: Actions = {
     const hashedPassword = await saltAndHashPassword(password);
 
     // Save the user to the database
-    registerUser(email, password, name);
+    registerUser(email, hashedPassword, name);
     return {
       status: 201,
       body: { message: 'User registered successfully' }

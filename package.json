@@ -51,6 +51,7 @@
 		"@lucia-auth/adapter-drizzle": "^1.0.7",
 		"@types/bcryptjs": "^2.4.6",
 		"arctic": "^1.9.2",
+		"argon2": "^0.40.3",
 		"bcrypt": "^5.1.1",
 		"bcryptjs": "^2.4.3",
 		"clsx": "^2.1.1",
