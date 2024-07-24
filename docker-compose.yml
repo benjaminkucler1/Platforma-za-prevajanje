@@ -1,0 +1,18 @@
+#./docker-compose.yml
+version: "3.9"
+
+volumes:
+  vol_db:
+
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: dev
+      POSTGRES_DB: dev-db
+    restart: always
+    volumes:
+      - vol_db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
