@@ -3,7 +3,7 @@ import postgres from "postgres";
 import { drizzle } from "drizzle-orm/postgres-js";
 import type { AdapterAccountType } from "@auth/core/adapters";
 
-export const languageEnum = pgEnum('language', ['si', 'en', 'de', 'it']); // todo 
+export const languageEnum = pgEnum('language', ['si', 'en', 'de', 'it']); // todo
 export const userStatusEnum = pgEnum('status', ['novice', 'intermediate', 'expert']);
 export const fileStatusEnum = pgEnum('status', ['waiting', 'in_review', 'completed']);
 export const userFileStatusEnum = pgEnum('status', ['in_progress', 'abandoned', 'in_review', 'completed']);
@@ -14,7 +14,6 @@ export const userTable = pgTable("user", {
     id: text("id").primaryKey(),
     email: text("email").notNull().unique(),
     emailVerified: timestamp("emailVerified", {mode: "date"}),
-    hashedPassword: text("hashedPassword"),
     image: text("image"),
     name: text("name"),
     phone: varchar("phone", {length: 10}),
@@ -26,7 +25,8 @@ export const userTable = pgTable("user", {
     status: userStatusEnum("status"),
     firstLang: languageEnum('language'),
     rating: integer("rating"),
-    role: userTypeEnum("userType").default('normal')
+    role: userTypeEnum("userType").default('normal'),
+    emptySettings: boolean("emptySettings").default(true)
 });
 
 export const accountTable = pgTable("account",{

@@ -97,6 +97,7 @@ CREATE TABLE IF NOT EXISTS "user" (
 	"language" "language",
 	"rating" integer,
 	"userType" "userType" DEFAULT 'normal',
+	"emptySettings" boolean DEFAULT true,
 	CONSTRAINT "user_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
