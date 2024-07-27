@@ -11,12 +11,6 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- CREATE TYPE "public"."provider" AS ENUM('google', 'github');
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
  CREATE TYPE "public"."userType" AS ENUM('admin', 'normal', 'client');
 EXCEPTION
  WHEN duplicate_object THEN null;
@@ -92,7 +86,7 @@ CREATE TABLE IF NOT EXISTS "user" (
 	"postnumber" integer,
 	"city" varchar(255),
 	"school" varchar(128),
-	"birthday" timestamp,
+	"birthday" date,
 	"status" "status",
 	"language" "language",
 	"rating" integer,

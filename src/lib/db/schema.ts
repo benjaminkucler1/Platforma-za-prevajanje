@@ -1,13 +1,14 @@
-import { primaryKey, pgTable, pgEnum, serial, text, varchar, boolean, integer, timestamp } from "drizzle-orm/pg-core";
+import { primaryKey, pgTable, pgEnum, serial, text, varchar, boolean, integer, timestamp, date } from "drizzle-orm/pg-core";
 import postgres from "postgres";
 import { drizzle } from "drizzle-orm/postgres-js";
 import type { AdapterAccountType } from "@auth/core/adapters";
+import type { LanguageEnum, UserStatusEnum, FileStatusEnum, UserFileStatusEnum, UserTypeEnum } from "$lib/types/enums.ts";
 
 export const languageEnum = pgEnum('language', ['si', 'en', 'de', 'it']); // todo
 export const userStatusEnum = pgEnum('status', ['novice', 'intermediate', 'expert']);
 export const fileStatusEnum = pgEnum('status', ['waiting', 'in_review', 'completed']);
 export const userFileStatusEnum = pgEnum('status', ['in_progress', 'abandoned', 'in_review', 'completed']);
-export const providerEnum = pgEnum('provider', ['google', 'github']);
+//export const providerEnum = pgEnum('provider', ['google', 'github']);
 export const userTypeEnum = pgEnum('userType', ['admin', 'normal', 'client']) // todo POPRAVI
 
 export const userTable = pgTable("user", {
@@ -21,7 +22,7 @@ export const userTable = pgTable("user", {
     postnumber: integer("postnumber"),
     city: varchar("city", {length: 255}),
     school: varchar("school", {length: 128}),
-    birthday: timestamp("birthday"),
+    birthday: date('birthday', { mode: "string" }),
     status: userStatusEnum("status"),
     firstLang: languageEnum('language'),
     rating: integer("rating"),

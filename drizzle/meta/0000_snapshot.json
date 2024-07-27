@@ -1,5 +1,5 @@
 {
-  "id": "c1c86817-57a8-4361-969a-7b3ec01bc1b8",
+  "id": "728d0588-d099-4fe7-b549-c7de37e494ac",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -500,7 +500,7 @@
         },
         "birthday": {
           "name": "birthday",
-          "type": "timestamp",
+          "type": "date",
           "primaryKey": false,
           "notNull": false
         },
@@ -669,14 +669,6 @@
         "en",
         "de",
         "it"
-      ]
-    },
-    "public.provider": {
-      "name": "provider",
-      "schema": "public",
-      "values": [
-        "google",
-        "github"
       ]
     },
     "public.userType": {

@@ -2,6 +2,7 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { cubicOut } from "svelte/easing";
 import type { TransitionConfig } from "svelte/transition";
+import type { LanguageEnum } from "./types/enums";
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -60,3 +61,12 @@ export const flyAndScale = (
 		easing: cubicOut
 	};
 };
+
+//ENUMS
+export function getEnumValues<T extends object>(enumObj: T): readonly [string, ...string[]] {
+    const values = Object.values(enumObj) as string[];
+    if (values.length === 0) {
+        throw new Error("Enum must have at least one value");
+    }
+    return values as [string, ...string[]];
+}
