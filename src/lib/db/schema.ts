@@ -5,9 +5,8 @@ import type { AdapterAccountType } from "@auth/core/adapters";
 import type { LanguageEnum, UserStatusEnum, FileStatusEnum, UserFileStatusEnum, UserTypeEnum } from "$lib/types/enums.ts";
 
 export const languageEnum = pgEnum('language', ['si', 'en', 'de', 'it']); // todo
-export const userStatusEnum = pgEnum('status', ['novice', 'intermediate', 'expert']);
-export const fileStatusEnum = pgEnum('status', ['waiting', 'in_review', 'completed']);
-export const userFileStatusEnum = pgEnum('status', ['in_progress', 'abandoned', 'in_review', 'completed']);
+export const userStatusEnum = pgEnum('userStatus', ['novice', 'intermediate', 'expert']);
+export const fileStatusEnum = pgEnum('fileStatus', ['obtainable', 'obtained', 'in_review', 'completed']);
 //export const providerEnum = pgEnum('provider', ['google', 'github']);
 export const userTypeEnum = pgEnum('userType', ['admin', 'normal', 'client']) // todo POPRAVI
 
@@ -24,7 +23,7 @@ export const userTable = pgTable("user", {
     school: varchar("school", {length: 128}),
     birthday: date('birthday', { mode: "string" }),
     status: userStatusEnum("status"),
-    firstLang: languageEnum('language'),
+    firstLang: languageEnum('firstLang'),
     rating: integer("rating"),
     role: userTypeEnum("userType").default('normal'),
     emptySettings: boolean("emptySettings").default(true)
@@ -53,14 +52,14 @@ export const accountTable = pgTable("account",{
 
 export const fileTable = pgTable("file", {
     id: serial("id").primaryKey(),
-    langFrom: languageEnum("language").notNull(),
-    langTo: languageEnum("language").notNull(),
-    currentUserId: text("currentUserId").references(() => userTable.id).notNull(),
-    obtainable: boolean("obtainable").notNull(),
-    progress: integer("progress").notNull(),
-    status: fileStatusEnum("status").notNull(),
+    name: text("name").notNull(),
+    langFrom: languageEnum("langFrom").notNull(),
+    langTo: languageEnum("langTo").notNull(),
+    currentUserId: text("currentUserId").references(() => userTable.id),
+    progress: integer("progress").default(0),
+    status: fileStatusEnum("status"),
     createdBy: text("CreatedByUserId").references(() => userTable.id).notNull(),
-    createdOn: timestamp("createdOn").notNull()
+    createdOn: timestamp("createdOn").defaultNow()
 });
 
 export const userLangTable = pgTable("userLang", {
@@ -77,7 +76,6 @@ export const userLangTable = pgTable("userLang", {
 export const userFileTable = pgTable("userFile", {
     userId: text("userId").references(() => userTable.id),
     fileId: integer("fileId").references(() => fileTable.id),
-    status: userFileStatusEnum("status").notNull(),
     abandonedOn: timestamp("abandonedOn")
     },
     (userFile) => {

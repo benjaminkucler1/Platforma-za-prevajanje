@@ -8,3 +8,10 @@ export interface UserDataUpdate {
     birthday?: string; 
     firstLang?: string;
 }
+
+export interface FileCreateData {
+    name: string;
+    langFrom: string;
+    langTo: string;
+    createdBy: string;
+}

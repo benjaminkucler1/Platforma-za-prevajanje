@@ -6,6 +6,10 @@
 
 	let email: string = '';
 
+	const handleSignIn = () =>{
+		
+	}
+
 	const handleEmailSignIn = () => {
 		signIn('nodemailer', { email, callbackUrl: '/' });
 	};

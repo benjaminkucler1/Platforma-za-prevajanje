@@ -15,6 +15,18 @@ DO $$ BEGIN
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
+
+
+DROP TABLE IF EXISTS "word";
+DROP TABLE IF EXISTS "account";
+DROP TABLE IF EXISTS "authenticator";
+DROP TABLE IF EXISTS "session";
+DROP TABLE IF EXISTS "userFile";
+DROP TABLE IF EXISTS "userLang";
+DROP TABLE IF EXISTS "file";
+DROP TABLE IF EXISTS "user";
+DROP TABLE IF EXISTS "verificationToken";
+
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "account" (
 	"userId" text NOT NULL,
@@ -46,13 +58,14 @@ CREATE TABLE IF NOT EXISTS "authenticator" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "file" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"language" "language" NOT NULL,
-	"currentUserId" text NOT NULL,
-	"obtainable" boolean NOT NULL,
-	"progress" integer NOT NULL,
-	"status" "status" NOT NULL,
+	"name" text NOT NULL,
+	"langFrom" "language" NOT NULL,
+	"langTo" "language" NOT NULL,
+	"currentUserId" text,
+	"progress" integer DEFAULT 0,
+	"status" "status",
 	"CreatedByUserId" text NOT NULL,
-	"createdOn" timestamp NOT NULL
+	"createdOn" timestamp DEFAULT now()
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "session" (
@@ -88,7 +101,7 @@ CREATE TABLE IF NOT EXISTS "user" (
 	"school" varchar(128),
 	"birthday" date,
 	"status" "status",
-	"language" "language",
+	"firstLang" "language",
 	"rating" integer,
 	"userType" "userType" DEFAULT 'normal',
 	"emptySettings" boolean DEFAULT true,

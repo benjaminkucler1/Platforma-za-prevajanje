@@ -1,0 +1,1 @@
+ALTER TABLE "file" ALTER COLUMN "status" DROP DEFAULT;

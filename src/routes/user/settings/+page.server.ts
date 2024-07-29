@@ -35,7 +35,6 @@ export const actions: Actions = {
   default: async (event) => {
     const session = await event.locals.auth();
     const email: string = session!.user!.email!;
-    const normal: boolean = await isNormal(email);
 
     const form = await superValidate(event, zod(zUserProfileSchema));
     console.log(form.data);

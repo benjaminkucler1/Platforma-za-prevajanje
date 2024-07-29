@@ -1,6 +1,6 @@
 {
-  "id": "796c052c-5ef3-4c64-979d-2100b5eb980e",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "f457e466-29ce-4684-ad97-ee2687949ea7",
+  "prevId": "7e6cdefb-02b2-48fa-a03c-c88ad7b12ce3",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -235,11 +235,10 @@
         },
         "status": {
           "name": "status",
-          "type": "status",
+          "type": "fileStatus",
           "typeSchema": "public",
           "primaryKey": false,
-          "notNull": false,
-          "default": "'obtainable'"
+          "notNull": false
         },
         "CreatedByUserId": {
           "name": "CreatedByUserId",
@@ -344,13 +343,6 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": false
-        },
-        "status": {
-          "name": "status",
-          "type": "status",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": true
         },
         "abandonedOn": {
           "name": "abandonedOn",
@@ -516,7 +508,7 @@
         },
         "status": {
           "name": "status",
-          "type": "status",
+          "type": "userStatus",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": false
@@ -662,13 +654,14 @@
     }
   },
   "enums": {
-    "public.status": {
-      "name": "status",
+    "public.fileStatus": {
+      "name": "fileStatus",
       "schema": "public",
       "values": [
-        "novice",
-        "intermediate",
-        "expert"
+        "obtainable",
+        "obtained",
+        "in_review",
+        "completed"
       ]
     },
     "public.language": {
@@ -679,6 +672,15 @@
         "en",
         "de",
         "it"
+      ]
+    },
+    "public.userStatus": {
+      "name": "userStatus",
+      "schema": "public",
+      "values": [
+        "novice",
+        "intermediate",
+        "expert"
       ]
     },
     "public.userType": {
