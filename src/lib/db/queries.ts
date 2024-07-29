@@ -1,9 +1,9 @@
-import { asc, desc, eq } from 'drizzle-orm';
+import { and, asc, desc, eq } from 'drizzle-orm';
 import { db } from './db.server';
-import { fileTable, languageEnum, userTable, wordTable } from './schema';
+import { fileTable, languageEnum, userFileTable, userTable, wordTable } from './schema';
 import { v4 as uuidv4 } from 'uuid';
 import { fail } from '@sveltejs/kit';
-import type { FileCreateData, UserDataUpdate, WordPair } from '$lib/types/interfaces';
+import type { FileCreateData, UserDataUpdate, UserFileIds, WordPair } from '$lib/types/interfaces';
 import { FileStatusEnum, LanguageEnum } from '$lib/types/enums';
 
 //user
@@ -122,6 +122,20 @@ export async function getFilesByOwner(userId: string) {
 
 	return userFiles;
 }
+export async function getFilesByUserNormal(userId: string) {
+	const userFiles = await db.query.fileTable.findMany({
+		where: eq(fileTable.currentUserId, userId),
+		orderBy: [desc(fileTable.progress), desc(fileTable.createdOn)]
+	})
+
+	return userFiles;
+}
+
+export async function abandonFile(fileId: number){
+	await db.update(fileTable)
+		.set({ currentUserId: null, status: FileStatusEnum.OBTAINABLE })
+		.where(eq(fileTable.id, fileId));
+}
 
 export async function deleteFile(fileId: number){
 	await db.delete(fileTable)
@@ -136,10 +150,10 @@ export async function getObtainableFiles(){
 
 	return obtainableFiles;
 }
-export async function obtainFile(fileId: number, userId: string){
+export async function obtainFile(data: UserFileIds){
 	await db.update(fileTable)
-		.set({ currentUserId: userId, status: FileStatusEnum.OBTAINED })
-		.where(eq(fileTable.id, fileId));
+		.set({ currentUserId: data.userId, status: FileStatusEnum.OBTAINED })
+		.where(eq(fileTable.id, data.fileId));
 }
 
 
@@ -162,4 +176,24 @@ export async function insertWords(words: WordPair[], fileId: number) {
 		console.error(err);
 		return fail(500);
 	}
+}
+
+//USER_FILE
+export async function insertUserFile(data: UserFileIds){
+	try {
+		await db.insert(userFileTable).values({
+			userId: data.userId,
+			fileId: data.fileId
+		})
+	} catch (err){
+		console.error(err);
+		return fail(500);
+	}
+}
+
+export async function setAbandonedDate(data: UserFileIds){
+	await db.update(userFileTable)
+		.set({ abandonedOn: new Date() })
+		.where(and(eq(userFileTable.fileId, data.fileId), 
+		eq(userFileTable.userId, data.userId)));
 }

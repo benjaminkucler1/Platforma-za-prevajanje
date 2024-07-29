@@ -20,3 +20,8 @@ export interface WordPair {
     name: string;
     value: string;
 }
+
+export interface UserFileIds {
+    userId: string;
+    fileId: number;
+}

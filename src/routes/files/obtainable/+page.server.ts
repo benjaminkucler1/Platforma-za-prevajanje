@@ -1,6 +1,7 @@
-import { getObtainableFiles, getUserIdByEmail, getUserTypeByEmail, obtainFile } from "$lib/db/queries";
+import { getObtainableFiles, getUserIdByEmail, getUserTypeByEmail, insertUserFile, obtainFile } from "$lib/db/queries";
 import { fail, redirect, type Actions } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
+import type { UserFileIds } from "$lib/types/interfaces";
 
 const isNormal = async (email: string) => {
 	const userRole = await getUserTypeByEmail(email);
@@ -32,7 +33,12 @@ export const actions: Actions = {
         const fileId = Number(formData.get('fileId'));
 
         if(userId && fileId){
-            obtainFile(fileId, userId);
+            const data: UserFileIds = {
+                fileId: fileId,
+                userId: userId
+            }
+            obtainFile(data);
+            insertUserFile(data);
         }
         else{
             console.log("ERROR: Cannot obtain file");

@@ -1,8 +1,8 @@
 import { type InferSelectModel } from "drizzle-orm";
 import { userTable, fileTable, userFileTable, userLangTable, wordTable } from "./schema";
 
-export type User = InferSelectModel<typeof userTable>;
-export type File = InferSelectModel<typeof fileTable>;
-export type UserFile = InferSelectModel<typeof userFileTable>;
-export type UserLang = InferSelectModel<typeof userLangTable>;
-export type Word = InferSelectModel<typeof wordTable>;
+export type TUser = InferSelectModel<typeof userTable>;
+export type TFile = InferSelectModel<typeof fileTable>;
+export type TUserFile = InferSelectModel<typeof userFileTable>;
+export type TUserLang = InferSelectModel<typeof userLangTable>;
+export type TWord = InferSelectModel<typeof wordTable>;

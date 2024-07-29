@@ -1,13 +1,16 @@
 import { redirect, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import {
+    abandonFile,
 	deleteFile,
 	deleteWordsByFileId,
 	getFilesByOwner,
+	getFilesByUserNormal,
 	getUserIdByEmail,
 	getUserTypeByEmail,
 	insertFile,
-	insertWords
+	insertWords,
+    setAbandonedDate
 } from '$lib/db/queries';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
@@ -15,6 +18,7 @@ import { zFileCreateSchema } from '$lib/validation/file';
 import { withFiles } from 'sveltekit-superforms';
 import { message, setError, fail } from 'sveltekit-superforms';
 import { XMLParser } from '$lib/utils';
+import type { UserFileIds } from '$lib/types/interfaces';
 
 
 const isNormal = async (email: string) => {
@@ -32,13 +36,16 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 	const form = await superValidate(zod(zFileCreateSchema));
 
-	//user's files data
+	//owner's files data
 	const userFiles = await getFilesByOwner(userId);
+    //user obtained files data
+    const userObtainedFiles = await getFilesByUserNormal(userId);
 
 	return {
 		form,
 		normal,
-		userFiles
+		userFiles,
+        userObtainedFiles
 	};
 };
 
@@ -82,5 +89,22 @@ export const actions: Actions = {
 			deleteWordsByFileId(fileId);
 			deleteFile(fileId);
 		}
-	}
+	},
+    abandonFile: async ({ request, locals }) => {
+        const session = await locals.auth();
+		const email: string = session!.user!.email!;
+		const userId: string = await getUserIdByEmail(email);
+        const formData = await request.formData();
+        const fileId = Number(formData.get('fileId'));
+        
+        if(userId && fileId){
+            const data: UserFileIds = {
+                fileId: fileId,
+                userId: userId
+            }
+
+            abandonFile(data.fileId);
+            setAbandonedDate(data);
+        }
+    }
 };

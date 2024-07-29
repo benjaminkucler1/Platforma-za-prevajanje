@@ -10,7 +10,7 @@
 	<h3>You have to be logged as normal user</h3>
 {:else}
 	<Table.Root>
-		<Table.Caption>Files that you've uploaded</Table.Caption>
+		<Table.Caption>All obtainable files</Table.Caption>
 		<Table.Header>
 			<Table.Row>
 				<Table.Head>Name</Table.Head>
