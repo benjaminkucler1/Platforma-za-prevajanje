@@ -1,10 +1,10 @@
 import { asc, desc, eq } from 'drizzle-orm';
 import { db } from './db.server';
-import { fileTable, languageEnum, userTable } from './schema';
+import { fileTable, languageEnum, userTable, wordTable } from './schema';
 import { v4 as uuidv4 } from 'uuid';
 import { fail } from '@sveltejs/kit';
-import type { FileCreateData, UserDataUpdate } from '$lib/types/interfaces';
-import { LanguageEnum } from '$lib/types/enums';
+import type { FileCreateData, UserDataUpdate, WordPair } from '$lib/types/interfaces';
+import { FileStatusEnum, LanguageEnum } from '$lib/types/enums';
 
 //user
 export async function emailExists(email: string) {
@@ -105,17 +105,13 @@ export async function getUserDataByEmail(email: string) {
 //FILES
 
 export async function insertFile(data: FileCreateData) {
-	try {
-		await db.insert(fileTable).values({
+		const id = await db.insert(fileTable).values({
 			name: data.name,
 			langFrom: data.langFrom as LanguageEnum,
 			langTo: data.langTo as LanguageEnum,
 			createdBy: data.createdBy
 		}).returning({id: fileTable.id});
-	} catch (err) {
-		console.error(err);
-		return fail(500);
-	}
+	return id[0].id;
 }
 
 export async function getFilesByOwner(userId: string) {
@@ -125,4 +121,45 @@ export async function getFilesByOwner(userId: string) {
 	})
 
 	return userFiles;
+}
+
+export async function deleteFile(fileId: number){
+	await db.delete(fileTable)
+		.where(eq(fileTable.id, fileId));
+}
+
+export async function getObtainableFiles(){
+	const obtainableFiles = await db.query.fileTable.findMany({
+		where: eq(fileTable.status, FileStatusEnum.OBTAINABLE),
+		orderBy: [desc(fileTable.progress), desc(fileTable.createdOn)]
+	})
+
+	return obtainableFiles;
+}
+export async function obtainFile(fileId: number, userId: string){
+	await db.update(fileTable)
+		.set({ currentUserId: userId, status: FileStatusEnum.OBTAINED })
+		.where(eq(fileTable.id, fileId));
+}
+
+
+//WORD
+export async function deleteWordsByFileId(fileId: number){
+	await db.delete(wordTable)
+		.where(eq(wordTable.fileId, fileId));
+}
+
+export async function insertWords(words: WordPair[], fileId: number) {
+	try {
+		const wordRecords = words.map(word =>({
+			name: word.name,
+			value: word.value,
+			fileId: fileId
+		}));
+
+		await db.insert(wordTable).values(wordRecords);
+	} catch (err){
+		console.error(err);
+		return fail(500);
+	}
 }

@@ -1,5 +1,5 @@
 {
-  "id": "796c052c-5ef3-4c64-979d-2100b5eb980e",
+  "id": "6dda36b4-28eb-44f3-a8ad-3aad178e934c",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -235,7 +235,7 @@
         },
         "status": {
           "name": "status",
-          "type": "status",
+          "type": "fileStatus",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": false,
@@ -344,13 +344,6 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": false
-        },
-        "status": {
-          "name": "status",
-          "type": "status",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": true
         },
         "abandonedOn": {
           "name": "abandonedOn",
@@ -516,7 +509,7 @@
         },
         "status": {
           "name": "status",
-          "type": "status",
+          "type": "userStatus",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": false
@@ -609,15 +602,15 @@
           "primaryKey": true,
           "notNull": true
         },
-        "originalWord": {
-          "name": "originalWord",
-          "type": "varchar(64)",
+        "name": {
+          "name": "name",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
-        "translatedWord": {
-          "name": "translatedWord",
-          "type": "varchar(64)",
+        "value": {
+          "name": "value",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },
@@ -662,13 +655,14 @@
     }
   },
   "enums": {
-    "public.status": {
-      "name": "status",
+    "public.fileStatus": {
+      "name": "fileStatus",
       "schema": "public",
       "values": [
-        "novice",
-        "intermediate",
-        "expert"
+        "obtainable",
+        "obtained",
+        "in_review",
+        "completed"
       ]
     },
     "public.language": {
@@ -679,6 +673,15 @@
         "en",
         "de",
         "it"
+      ]
+    },
+    "public.userStatus": {
+      "name": "userStatus",
+      "schema": "public",
+      "values": [
+        "novice",
+        "intermediate",
+        "expert"
       ]
     },
     "public.userType": {

@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1722175494651,
-      "tag": "0000_cuddly_chameleon",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1722175576239,
-      "tag": "0001_conscious_thing",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1722192818830,
-      "tag": "0002_big_overlord",
+      "when": 1722266413671,
+      "tag": "0000_puzzling_major_mapleleaf",
       "breakpoints": true
     }
   ]

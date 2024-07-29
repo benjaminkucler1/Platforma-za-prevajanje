@@ -1,6 +1,6 @@
 <script lang="ts">
 	import * as Dialog from '$lib/components/ui/dialog';
-	import Button from '$lib/components/ui/button/button.svelte';
+	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
 	import * as Tabs from '$lib/components/ui/tabs';
@@ -12,8 +12,9 @@
 	import SuperDebug from 'sveltekit-superforms';
 	import { getEnumValues } from '$lib/utils';
 	import { LanguageEnum } from '$lib/types/enums';
-	import { ScrollArea } from "$lib/components/ui/scroll-area/index.js";
-	import * as Table from "$lib/components/ui/table";
+	import { ScrollArea } from '$lib/components/ui/scroll-area/index.js';
+	import * as AlertDialog from "$lib/components/ui/alert-dialog";
+	import * as Table from '$lib/components/ui/table';
 
 	export let data: PageData;
 
@@ -38,6 +39,7 @@
 		: undefined;
 
 	const file = fileProxy(form, 'file');
+
 </script>
 
 {#if data.normal}
@@ -51,7 +53,7 @@
 				<Dialog.Description>Add file here.</Dialog.Description>
 			</Dialog.Header>
 			<SuperDebug data={$formData} />
-			<form method="POST" enctype="multipart/form-data" use:enhance>
+			<form method="POST" enctype="multipart/form-data" action="?/addFile" use:enhance>
 				<div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
 					<div class="form-group col-span-2">
 						<Form.Field {form} name="name">
@@ -114,7 +116,7 @@
 						</Form.Field>
 					</div>
 					<div class="form-group col-span-2">
-						<input type="file" name="file" bind:files={$file}/>
+						<input type="file" name="file" bind:files={$file} />
 						{#if $errors.file}<span>{$errors.file}</span>{/if}
 					</div>
 					<div class="form-group">
@@ -126,26 +128,34 @@
 	</Dialog.Root>
 
 	<Table.Root>
-		<Table.Caption>My files</Table.Caption>
+		<Table.Caption>Files that you've uploaded</Table.Caption>
 		<Table.Header>
-		  <Table.Row>
-			<Table.Head>Name</Table.Head>
-			<Table.Head>Original language</Table.Head>
-			<Table.Head>Wanted language</Table.Head>
-			<Table.Head>Progress</Table.Head>
-			<Table.Head>Status</Table.Head>
-			<Table.Head>Created on</Table.Head>
-		  </Table.Row>
+			<Table.Row>
+				<Table.Head>Name</Table.Head>
+				<Table.Head>Original language</Table.Head>
+				<Table.Head>Wanted language</Table.Head>
+				<Table.Head>Progress</Table.Head>
+				<Table.Head>Status</Table.Head>
+				<Table.Head>Created on</Table.Head>
+			</Table.Row>
 		</Table.Header>
 		<Table.Body>
-		  {#each data.userFiles as file}
-		  <Table.Cell>{file.name}</Table.Cell>
-		  <Table.Cell>{file.langFrom}</Table.Cell>
-		  <Table.Cell>{file.langFrom}</Table.Cell>
-		  <Table.Cell>{file.progress}%</Table.Cell>
-		  <Table.Cell>{file.status}</Table.Cell>
-		  <Table.Cell>{file.createdOn}</Table.Cell>
-		  {/each}
+			{#each data.userFiles as file}
+			<Table.Row>
+				<Table.Cell>{file.name}</Table.Cell>
+				<Table.Cell>{file.langFrom}</Table.Cell>
+				<Table.Cell>{file.langFrom}</Table.Cell>
+				<Table.Cell>{file.progress}%</Table.Cell>
+				<Table.Cell>{file.status}</Table.Cell>
+				<Table.Cell>{file.createdOn}</Table.Cell>
+				<Table.Cell>
+					<form method="post" action="?/removeFile">
+						<input type="hidden" name="fileId" value={file.id} />
+						<Button type="submit" variant="destructive">Remove</Button>
+					</form>
+				</Table.Cell>
+			</Table.Row>
+			{/each}
 		</Table.Body>
-	  </Table.Root>
+	</Table.Root>
 {/if}

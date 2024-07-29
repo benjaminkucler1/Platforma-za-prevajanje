@@ -11,16 +11,12 @@ export enum UserStatusEnum {
     EXPERT = "expert"
 }
 export enum FileStatusEnum {
-    WAITING = "waiting",
+    OBTAINABLE = "obtainable",
+    OBTAINED = "obtained",
     IN_REVIEW = "in_review",
     COMPLETED = "completed"
 }
-export enum UserFileStatusEnum {
-    IN_PROGRESS = "in_progress",
-    ABANDONED = "abandoned",
-    IN_REVIEW = "in_review",
-    COMPLETED = "completed"
-}
+
 export enum UserTypeEnum {
     ADMIN = "admin",
     NORMAL = "normal",

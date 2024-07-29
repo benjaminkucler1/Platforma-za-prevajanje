@@ -2,12 +2,10 @@ import { primaryKey, pgTable, pgEnum, serial, text, varchar, boolean, integer, t
 import postgres from "postgres";
 import { drizzle } from "drizzle-orm/postgres-js";
 import type { AdapterAccountType } from "@auth/core/adapters";
-import type { LanguageEnum, UserStatusEnum, FileStatusEnum, UserFileStatusEnum, UserTypeEnum } from "$lib/types/enums.ts";
 
 export const languageEnum = pgEnum('language', ['si', 'en', 'de', 'it']); // todo
 export const userStatusEnum = pgEnum('userStatus', ['novice', 'intermediate', 'expert']);
 export const fileStatusEnum = pgEnum('fileStatus', ['obtainable', 'obtained', 'in_review', 'completed']);
-//export const providerEnum = pgEnum('provider', ['google', 'github']);
 export const userTypeEnum = pgEnum('userType', ['admin', 'normal', 'client']) // todo POPRAVI
 
 export const userTable = pgTable("user", {
@@ -57,7 +55,7 @@ export const fileTable = pgTable("file", {
     langTo: languageEnum("langTo").notNull(),
     currentUserId: text("currentUserId").references(() => userTable.id),
     progress: integer("progress").default(0),
-    status: fileStatusEnum("status"),
+    status: fileStatusEnum("status").default("obtainable"),
     createdBy: text("CreatedByUserId").references(() => userTable.id).notNull(),
     createdOn: timestamp("createdOn").defaultNow()
 });
@@ -87,8 +85,8 @@ export const userFileTable = pgTable("userFile", {
 
 export const wordTable = pgTable("word", {
     id: serial("id").primaryKey(),
-    originalWord: varchar("originalWord", {length: 64}).notNull(),
-    translatedWord: varchar("translatedWord", {length: 64}),
+    name: text("name").notNull(),
+    value: text("value"),
     fileId: integer("fileId").references(() => fileTable.id).notNull(),
     reviewRequired: boolean("reviewRequired").default(false),
     currentLDistance: integer("currentLDistance")

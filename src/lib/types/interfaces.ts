@@ -15,3 +15,8 @@ export interface FileCreateData {
     langTo: string;
     createdBy: string;
 }
+
+export interface WordPair {
+    name: string;
+    value: string;
+}

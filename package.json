@@ -12,7 +12,8 @@
 		"format": "prettier --write .",
 		"generate": "drizzle-kit generate",
 		"migrate": "drizzle-kit migrate",
-		"studio": "drizzle-kit studio"
+		"studio": "drizzle-kit studio",
+		"drop": "drizzle-kit drop"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^3.0.0",
@@ -51,6 +52,7 @@
 		"@internationalized/date": "^3.5.5",
 		"@lucia-auth/adapter-drizzle": "^1.0.7",
 		"@types/bcryptjs": "^2.4.6",
+		"@xmldom/xmldom": "^0.8.10",
 		"arctic": "^1.9.2",
 		"argon2": "^0.40.3",
 		"bcrypt": "^5.1.1",

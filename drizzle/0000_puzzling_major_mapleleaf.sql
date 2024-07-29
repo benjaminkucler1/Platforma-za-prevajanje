@@ -1,5 +1,5 @@
 DO $$ BEGIN
- CREATE TYPE "public"."status" AS ENUM('novice', 'intermediate', 'expert');
+ CREATE TYPE "public"."fileStatus" AS ENUM('obtainable', 'obtained', 'in_review', 'completed');
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -11,22 +11,16 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
+ CREATE TYPE "public"."userStatus" AS ENUM('novice', 'intermediate', 'expert');
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
  CREATE TYPE "public"."userType" AS ENUM('admin', 'normal', 'client');
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
-
-
-DROP TABLE IF EXISTS "word";
-DROP TABLE IF EXISTS "account";
-DROP TABLE IF EXISTS "authenticator";
-DROP TABLE IF EXISTS "session";
-DROP TABLE IF EXISTS "userFile";
-DROP TABLE IF EXISTS "userLang";
-DROP TABLE IF EXISTS "file";
-DROP TABLE IF EXISTS "user";
-DROP TABLE IF EXISTS "verificationToken";
-
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "account" (
 	"userId" text NOT NULL,
@@ -63,7 +57,7 @@ CREATE TABLE IF NOT EXISTS "file" (
 	"langTo" "language" NOT NULL,
 	"currentUserId" text,
 	"progress" integer DEFAULT 0,
-	"status" "status",
+	"status" "fileStatus" DEFAULT 'obtainable',
 	"CreatedByUserId" text NOT NULL,
 	"createdOn" timestamp DEFAULT now()
 );
@@ -77,7 +71,6 @@ CREATE TABLE IF NOT EXISTS "session" (
 CREATE TABLE IF NOT EXISTS "userFile" (
 	"userId" text,
 	"fileId" integer,
-	"status" "status" NOT NULL,
 	"abandonedOn" timestamp,
 	CONSTRAINT "userFile_userId_fileId_pk" PRIMARY KEY("userId","fileId")
 );
@@ -100,7 +93,7 @@ CREATE TABLE IF NOT EXISTS "user" (
 	"city" varchar(255),
 	"school" varchar(128),
 	"birthday" date,
-	"status" "status",
+	"status" "userStatus",
 	"firstLang" "language",
 	"rating" integer,
 	"userType" "userType" DEFAULT 'normal',
@@ -117,8 +110,8 @@ CREATE TABLE IF NOT EXISTS "verificationToken" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "word" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"originalWord" varchar(64) NOT NULL,
-	"translatedWord" varchar(64),
+	"name" text NOT NULL,
+	"value" text,
 	"fileId" integer NOT NULL,
 	"reviewRequired" boolean DEFAULT false,
 	"currentLDistance" integer
