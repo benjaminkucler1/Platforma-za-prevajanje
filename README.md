@@ -10,3 +10,6 @@ export const calculateProgress = (words: WordPair[]) => {
 ```
 
 https://www.npmjs.com/package/levenshtein-edit-distance
+
+https://www.deepl.com/en/your-account/subscription
+https://developers.deepl.com/docs
