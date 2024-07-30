@@ -19,6 +19,20 @@ export const updateForbiddenWords = (words: Word[], forbiddenWords: string[]) =>
     });
 }
 ```
+```js
+export const updateReviewRequired = (words: Word[], maxDistance: number): Word[] => {
+    return words.map(word => {
+        const distance = levenshteinEditDistance(word.value, word.translation);
+        console.log(word.value)
+            console.log(distance)
+        if (distance > maxDistance) {
+            word.reviewRequired = true;
+            
+        }
+        return word;
+    });
+}
+```
 https://www.npmjs.com/package/levenshtein-edit-distance
 
 https://www.deepl.com/en/your-account/subscription
