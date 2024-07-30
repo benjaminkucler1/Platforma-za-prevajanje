@@ -90,7 +90,8 @@ export const wordTable = pgTable("word", {
     value: text("value"),
     fileId: integer("fileId").references(() => fileTable.id).notNull(),
     reviewRequired: boolean("reviewRequired").default(false),
-    currentLDistance: integer("currentLDistance")
+    reviewed: boolean("reviewed").default(false),
+    forbidden: boolean("forbidden").default(false)
 });
 
 export const sessionTable = pgTable("session", {
