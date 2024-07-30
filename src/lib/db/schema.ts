@@ -3,7 +3,8 @@ import postgres from "postgres";
 import { drizzle } from "drizzle-orm/postgres-js";
 import type { AdapterAccountType } from "@auth/core/adapters";
 
-export const languageEnum = pgEnum('language', [’bg’, ‘cs’, ‘da’, ‘de’, ‘el’, ‘en-gb’, ‘en-us’, ‘es’, ‘et’, ‘fi’, ‘fr’, ‘hu’, ‘id’, ‘it’, ‘ja’, ‘ko’, ‘lt’, ‘lv’, ‘nb’, ‘nl’, ‘pl’, ‘pt-br’, ‘pt-pt’, ‘ro’, ‘ru’, ‘sk’, ‘sl’, ‘sv’, ‘tr’, ‘uk’, ‘zh’, ‘zh-hans’]); // todo
+export const languageSourceEnum = pgEnum('sourceLanguage', ['ar', 'bg', 'cs', 'da', 'de', 'el', 'en', 'es', 'et', 'fi', 'fr', 'hu', 'id', 'it', 'ja', 'ko', 'lt', 'lv', 'nb', 'nl', 'pl', 'pt', 'ro', 'ru', 'sk', 'sl', 'sv', 'tr', 'uk', 'zh']);
+export const languageTargetEnum = pgEnum('targetLanguage', ['ar', 'bg', 'cs', 'da', 'de', 'el', 'en', 'en-gb', 'en-us', 'es', 'et', 'fi', 'fr', 'hu', 'id', 'it', 'ja', 'ko', 'lt', 'lv', 'nb', 'nl', 'pl', 'pt', 'pt-br', 'pt-pt', 'ro', 'ru', 'sk', 'sl', 'sv', 'tr', 'uk', 'zh', 'zh-hans', 'zh-hant']);
 export const userStatusEnum = pgEnum('userStatus', ['novice', 'intermediate', 'expert']);
 export const fileStatusEnum = pgEnum('fileStatus', ['obtainable', 'obtained', 'in_review', 'completed']);
 export const userTypeEnum = pgEnum('userType', ['admin', 'normal', 'client']) // todo POPRAVI
@@ -21,7 +22,7 @@ export const userTable = pgTable("user", {
     school: varchar("school", {length: 128}),
     birthday: date('birthday', { mode: "string" }),
     status: userStatusEnum("status"),
-    firstLang: languageEnum('firstLang'),
+    firstLang: languageTargetEnum('firstLanguage'),
     rating: integer("rating"),
     role: userTypeEnum("userType").default('normal'),
     emptySettings: boolean("emptySettings").default(true)
@@ -51,8 +52,8 @@ export const accountTable = pgTable("account",{
 export const fileTable = pgTable("file", {
     id: serial("id").primaryKey(),
     name: text("name").notNull(),
-    langFrom: languageEnum("langFrom").notNull(),
-    langTo: languageEnum("langTo").notNull(),
+    langFrom: languageSourceEnum("sourceLanguage").notNull(),
+    langTo: languageTargetEnum("targetLanguage").notNull(),
     currentUserId: text("currentUserId").references(() => userTable.id),
     progress: integer("progress").default(0),
     status: fileStatusEnum("status").default("obtainable"),
@@ -62,7 +63,7 @@ export const fileTable = pgTable("file", {
 
 export const userLangTable = pgTable("userLang", {
     userId: text("userId").references(() => userTable.id),
-    lang: languageEnum("language")
+    lang: languageTargetEnum("language")
     },
     (userLang) => {
         return{
