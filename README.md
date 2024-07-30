@@ -11,7 +11,8 @@ export const calculateProgress = (words: WordPair[]) => {
 ```js
 export const updateForbiddenWords = (words: Word[], forbiddenWords: string[]) =>{
     return words.map(word => {
-        if (forbiddenWords.includes(word.value)) {
+        const isForbidden = forbiddenWords.some(forbiddenWord => word.value.includes(forbiddenWord));
+        if (isForbidden) {
             return { ...word, forbidden: true };
         }
         return word;
