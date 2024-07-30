@@ -7,7 +7,7 @@ export const languageSourceEnum = pgEnum('sourceLanguage', ['ar', 'bg', 'cs', 'd
 export const languageTargetEnum = pgEnum('targetLanguage', ['ar', 'bg', 'cs', 'da', 'de', 'el', 'en', 'en-gb', 'en-us', 'es', 'et', 'fi', 'fr', 'hu', 'id', 'it', 'ja', 'ko', 'lt', 'lv', 'nb', 'nl', 'pl', 'pt', 'pt-br', 'pt-pt', 'ro', 'ru', 'sk', 'sl', 'sv', 'tr', 'uk', 'zh', 'zh-hans', 'zh-hant']);
 export const userStatusEnum = pgEnum('userStatus', ['novice', 'intermediate', 'expert']);
 export const fileStatusEnum = pgEnum('fileStatus', ['obtainable', 'obtained', 'in_review', 'completed']);
-export const userTypeEnum = pgEnum('userType', ['admin', 'normal', 'client']) // todo POPRAVI
+export const userTypeEnum = pgEnum('userType', ['admin', 'normal', 'client'])
 
 export const userTable = pgTable("user", {
     id: text("id").primaryKey(),
