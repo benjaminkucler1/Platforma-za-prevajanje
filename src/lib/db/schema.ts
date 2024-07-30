@@ -22,7 +22,7 @@ export const userTable = pgTable("user", {
     school: varchar("school", {length: 128}),
     birthday: date('birthday', { mode: "string" }),
     status: userStatusEnum("status"),
-    firstLang: languageTargetEnum('firstLanguage'),
+    firstLanguage: languageTargetEnum('firstLanguage'),
     rating: integer("rating"),
     role: userTypeEnum("userType").default('normal'),
     emptySettings: boolean("emptySettings").default(true)
@@ -52,8 +52,8 @@ export const accountTable = pgTable("account",{
 export const fileTable = pgTable("file", {
     id: serial("id").primaryKey(),
     name: text("name").notNull(),
-    langFrom: languageSourceEnum("sourceLanguage").notNull(),
-    langTo: languageTargetEnum("targetLanguage").notNull(),
+    sourceLanguage: languageSourceEnum("sourceLanguage").notNull(),
+    targetLanguage: languageTargetEnum("targetLanguage").notNull(),
     currentUserId: text("currentUserId").references(() => userTable.id),
     progress: integer("progress").default(0),
     status: fileStatusEnum("status").default("obtainable"),
@@ -63,7 +63,7 @@ export const fileTable = pgTable("file", {
 
 export const userLangTable = pgTable("userLang", {
     userId: text("userId").references(() => userTable.id),
-    lang: languageTargetEnum("language")
+    language: languageTargetEnum("language")
     },
     (userLang) => {
         return{
