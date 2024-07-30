@@ -1,10 +1,10 @@
 import { and, asc, desc, eq } from 'drizzle-orm';
 import { db } from './db.server';
-import { fileTable, languageEnum, userFileTable, userTable, wordTable } from './schema';
+import { fileTable, userFileTable, userTable, wordTable } from './schema';
 import { v4 as uuidv4 } from 'uuid';
 import { fail } from '@sveltejs/kit';
 import type { FileCreateData, UserDataUpdate, UserFileIds, WordPair } from '$lib/types/interfaces';
-import { FileStatusEnum, LanguageEnum } from '$lib/types/enums';
+import { FileStatusEnum, LanguageSourceEnum, LanguageTargetEnum } from '$lib/types/enums';
 
 //user
 export async function emailExists(email: string) {
@@ -63,7 +63,7 @@ export async function updateUserData(email: string, data: UserDataUpdate) {
 				city: data.city,
 				school: data.school,
 				birthday: data.birthday,
-				firstLang: data.firstLang as LanguageEnum,
+				firstLanguage: data.firstLanguage as LanguageTargetEnum,
 				emptySettings: false
 			})
 			.where(eq(userTable.email, email));
@@ -83,7 +83,7 @@ export async function getUserDataByEmail(email: string) {
 			city: userTable.city,
 			school: userTable.school,
 			birthday: userTable.birthday,
-			firstLang: userTable.firstLang
+			firstLanguage: userTable.firstLanguage
 		})
 		.from(userTable)
 		.where(eq(userTable.email, email))
@@ -98,7 +98,7 @@ export async function getUserDataByEmail(email: string) {
 		city: result[0]?.city ?? undefined,
 		school: result[0]?.school ?? undefined,
 		birthday: result[0]?.birthday ?? undefined,
-		firstLang: result[0]?.firstLang ?? undefined
+		firstLanguage: result[0]?.firstLanguage ?? undefined
 	};
 }
 
@@ -107,8 +107,9 @@ export async function getUserDataByEmail(email: string) {
 export async function insertFile(data: FileCreateData) {
 		const id = await db.insert(fileTable).values({
 			name: data.name,
-			langFrom: data.langFrom as LanguageEnum,
-			langTo: data.langTo as LanguageEnum,
+			sourceLanguage: data.sourceLanguage as LanguageSourceEnum,
+			targetLanguage: data.targetLanguage as LanguageTargetEnum,
+			progress: data.progress,
 			createdBy: data.createdBy
 		}).returning({id: fileTable.id});
 	return id[0].id;
@@ -163,6 +164,14 @@ export async function deleteWordsByFileId(fileId: number){
 		.where(eq(wordTable.fileId, fileId));
 }
 
+export async function getWordsByFileId(fileId: number){
+	const words = await db.query.wordTable.findMany({
+		where: eq(wordTable.fileId, fileId),
+		orderBy: [desc(wordTable.reviewRequired), desc(wordTable.forbidden)]
+	});
+	return words;
+}
+
 export async function insertWords(words: WordPair[], fileId: number) {
 	try {
 		const wordRecords = words.map(word =>({
@@ -196,4 +205,9 @@ export async function setAbandonedDate(data: UserFileIds){
 		.set({ abandonedOn: new Date() })
 		.where(and(eq(userFileTable.fileId, data.fileId), 
 		eq(userFileTable.userId, data.userId)));
+}
+
+export async function deleteUserFileByFileId(fileId: number){
+	await db.delete(userFileTable)
+		.where(eq(userFileTable.fileId, fileId));
 }

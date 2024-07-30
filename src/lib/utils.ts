@@ -2,7 +2,6 @@ import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { cubicOut } from 'svelte/easing';
 import type { TransitionConfig } from 'svelte/transition';
-import type { LanguageEnum } from './types/enums';
 import { DOMParser } from '@xmldom/xmldom';
 import type { WordPair } from './types/interfaces';
 
@@ -85,3 +84,12 @@ export const XMLParser = (XMLString: string, tagName = 'string'): WordPair[] => 
 	}
 	return result;
 };
+
+//PROGRESS
+export const calculateProgress = (words: WordPair[]) => {
+    if (words.length === 0) return 0;
+
+    const filledCount = words.filter(word => word.value !== "").length;
+    const percentage = Math.round((filledCount / words.length) * 100);
+    return percentage;
+}

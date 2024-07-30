@@ -6,14 +6,15 @@ export interface UserDataUpdate {
     city?: string;
     school?: string;
     birthday?: string; 
-    firstLang?: string;
+    firstLanguage?: string;
 }
 
 export interface FileCreateData {
     name: string;
-    langFrom: string;
-    langTo: string;
+    sourceLanguage: string;
+    targetLanguage: string;
     createdBy: string;
+    progress?: number;
 }
 
 export interface WordPair {

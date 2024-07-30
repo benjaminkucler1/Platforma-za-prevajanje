@@ -14,8 +14,8 @@
 		<Table.Header>
 			<Table.Row>
 				<Table.Head>Name</Table.Head>
-				<Table.Head>Original language</Table.Head>
-				<Table.Head>Wanted language</Table.Head>
+				<Table.Head>Source language</Table.Head>
+				<Table.Head>Target language</Table.Head>
 				<Table.Head>Progress</Table.Head>
 				<Table.Head>Status</Table.Head>
 			</Table.Row>
@@ -24,8 +24,8 @@
 			{#each data.obtainableFiles as file}
 			<Table.Row>
 				<Table.Cell>{file.name}</Table.Cell>
-				<Table.Cell>{file.langFrom}</Table.Cell>
-				<Table.Cell>{file.langFrom}</Table.Cell>
+				<Table.Cell>{file.sourceLanguage}</Table.Cell>
+				<Table.Cell>{file.targetLanguage}</Table.Cell>
 				<Table.Cell>{file.progress}%</Table.Cell>
 				<Table.Cell>{file.status}</Table.Cell>
 				<Table.Cell>

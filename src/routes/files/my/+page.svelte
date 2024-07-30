@@ -11,9 +11,7 @@
 	import { zFileCreateSchema } from '$lib/validation/file';
 	import SuperDebug from 'sveltekit-superforms';
 	import { getEnumValues } from '$lib/utils';
-	import { LanguageEnum } from '$lib/types/enums';
-	import { ScrollArea } from '$lib/components/ui/scroll-area/index.js';
-	import * as AlertDialog from "$lib/components/ui/alert-dialog";
+	import { LanguageSourceEnum, LanguageTargetEnum } from '$lib/types/enums';
 	import * as Table from '$lib/components/ui/table';
 
 	export let data: PageData;
@@ -24,17 +22,17 @@
 
 	const { form: formData, enhance, errors } = form;
 
-	$: selectedLangFrom = $formData.langFrom
+	$: selectedSourceLanguage = $formData.sourceLanguage
 		? {
-				label: $formData.langFrom,
-				value: $formData.langFrom
+				label: $formData.sourceLanguage,
+				value: $formData.sourceLanguage
 			}
 		: undefined;
 
-	$: selectedLangTo = $formData.langTo
+	$: selectedTargetLanguage = $formData.targetLanguage
 		? {
-				label: $formData.langTo,
-				value: $formData.langTo
+				label: $formData.targetLanguage,
+				value: $formData.targetLanguage
 			}
 		: undefined;
 
@@ -48,8 +46,8 @@
 	<Table.Header>
 		<Table.Row>
 			<Table.Head>Name</Table.Head>
-			<Table.Head>Original language</Table.Head>
-			<Table.Head>Wanted language</Table.Head>
+			<Table.Head>Source language</Table.Head>
+			<Table.Head>Target language</Table.Head>
 			<Table.Head>Progress</Table.Head>
 			<Table.Head>Status</Table.Head>
 		</Table.Row>
@@ -58,14 +56,14 @@
 		{#each data.userObtainedFiles as file}
 		<Table.Row>
 			<Table.Cell>{file.name}</Table.Cell>
-			<Table.Cell>{file.langFrom}</Table.Cell>
-			<Table.Cell>{file.langFrom}</Table.Cell>
+			<Table.Cell>{file.sourceLanguage}</Table.Cell>
+			<Table.Cell>{file.targetLanguage}</Table.Cell>
 			<Table.Cell>{file.progress}%</Table.Cell>
 			<Table.Cell>{file.status}</Table.Cell>
 			<Table.Cell>
 				<form method="post" action="">
 					<input type="hidden" name="fileId" value={file.id} />
-					<Button type="submit" variant="ghost">Edit</Button>
+					<Button type="submit" disabled>Edit</Button>
 				</form>
 			</Table.Cell>
 			<Table.Cell>
@@ -100,52 +98,52 @@
 						</Form.Field>
 					</div>
 					<div class="form-group">
-						<Form.Field {form} name="langFrom">
+						<Form.Field {form} name="sourceLanguage">
 							<Form.Control let:attrs>
 								<Form.Label>Original Language</Form.Label>
 								<Select.Root
-									selected={selectedLangFrom}
+									selected={selectedSourceLanguage}
 									onSelectedChange={(v) => {
-										v && ($formData.langFrom = v.value);
+										v && ($formData.sourceLanguage = v.value);
 									}}
 								>
 									<Select.Trigger {...attrs}>
-										<Select.Value placeholder="Select a original language" />
+										<Select.Value placeholder="Select a source language" />
 									</Select.Trigger>
 									<Select.Content>
-										{#each getEnumValues(LanguageEnum) as option}
+										{#each getEnumValues(LanguageSourceEnum) as option}
 											<Select.Item value={option} label={option} />
 										{/each}
 									</Select.Content>
 								</Select.Root>
-								<input hidden bind:value={$formData.langFrom} name={attrs.name} />
+								<input hidden bind:value={$formData.sourceLanguage} name={attrs.name} />
 							</Form.Control>
-							<Form.Description>This is your original language.</Form.Description>
+							<Form.Description>This is your source language.</Form.Description>
 							<Form.FieldErrors />
 						</Form.Field>
 					</div>
 					<div class="form-group">
-						<Form.Field {form} name="langTo">
+						<Form.Field {form} name="targetLanguage">
 							<Form.Control let:attrs>
 								<Form.Label>Wanted Language</Form.Label>
 								<Select.Root
-									selected={selectedLangTo}
+									selected={selectedTargetLanguage}
 									onSelectedChange={(v) => {
-										v && ($formData.langTo = v.value);
+										v && ($formData.targetLanguage = v.value);
 									}}
 								>
 									<Select.Trigger {...attrs}>
-										<Select.Value placeholder="Select a wanted language" />
+										<Select.Value placeholder="Select a target language" />
 									</Select.Trigger>
 									<Select.Content>
-										{#each getEnumValues(LanguageEnum) as option}
+										{#each getEnumValues(LanguageTargetEnum) as option}
 											<Select.Item value={option} label={option} />
 										{/each}
 									</Select.Content>
 								</Select.Root>
-								<input hidden bind:value={$formData.langTo} name={attrs.name} />
+								<input hidden bind:value={$formData.targetLanguage} name={attrs.name} />
 							</Form.Control>
-							<Form.Description>This is your wanted language.</Form.Description>
+							<Form.Description>This is your target language.</Form.Description>
 							<Form.FieldErrors />
 						</Form.Field>
 					</div>
@@ -166,8 +164,8 @@
 		<Table.Header>
 			<Table.Row>
 				<Table.Head>Name</Table.Head>
-				<Table.Head>Original language</Table.Head>
-				<Table.Head>Wanted language</Table.Head>
+				<Table.Head>Source language</Table.Head>
+				<Table.Head>Target language</Table.Head>
 				<Table.Head>Progress</Table.Head>
 				<Table.Head>Status</Table.Head>
 				<Table.Head>Created on</Table.Head>
@@ -177,8 +175,8 @@
 			{#each data.userFiles as file}
 			<Table.Row>
 				<Table.Cell>{file.name}</Table.Cell>
-				<Table.Cell>{file.langFrom}</Table.Cell>
-				<Table.Cell>{file.langFrom}</Table.Cell>
+				<Table.Cell>{file.sourceLanguage}</Table.Cell>
+				<Table.Cell>{file.targetLanguage}</Table.Cell>
 				<Table.Cell>{file.progress}%</Table.Cell>
 				<Table.Cell>{file.status}</Table.Cell>
 				<Table.Cell>{file.createdOn}</Table.Cell>

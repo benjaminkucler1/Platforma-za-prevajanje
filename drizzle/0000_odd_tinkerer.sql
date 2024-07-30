@@ -5,7 +5,13 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- CREATE TYPE "public"."language" AS ENUM('si', 'en', 'de', 'it');
+ CREATE TYPE "public"."sourceLanguage" AS ENUM('de', 'el', 'en', 'fr', 'it', 'nb', 'sk', 'sl', 'sv');
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ CREATE TYPE "public"."targetLanguage" AS ENUM('de', 'el', 'en', 'en-gb', 'en-us', 'fr', 'it', 'nb', 'sk', 'sl', 'sv');
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -53,8 +59,8 @@ CREATE TABLE IF NOT EXISTS "authenticator" (
 CREATE TABLE IF NOT EXISTS "file" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
-	"langFrom" "language" NOT NULL,
-	"langTo" "language" NOT NULL,
+	"sourceLanguage" "sourceLanguage" NOT NULL,
+	"targetLanguage" "targetLanguage" NOT NULL,
 	"currentUserId" text,
 	"progress" integer DEFAULT 0,
 	"status" "fileStatus" DEFAULT 'obtainable',
@@ -77,7 +83,7 @@ CREATE TABLE IF NOT EXISTS "userFile" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "userLang" (
 	"userId" text,
-	"language" "language",
+	"language" "targetLanguage",
 	CONSTRAINT "userLang_userId_language_pk" PRIMARY KEY("userId","language")
 );
 --> statement-breakpoint
@@ -94,7 +100,7 @@ CREATE TABLE IF NOT EXISTS "user" (
 	"school" varchar(128),
 	"birthday" date,
 	"status" "userStatus",
-	"firstLang" "language",
+	"firstLanguage" "targetLanguage",
 	"rating" integer,
 	"userType" "userType" DEFAULT 'normal',
 	"emptySettings" boolean DEFAULT true,
@@ -114,7 +120,9 @@ CREATE TABLE IF NOT EXISTS "word" (
 	"value" text,
 	"fileId" integer NOT NULL,
 	"reviewRequired" boolean DEFAULT false,
-	"currentLDistance" integer
+	"reviewed" boolean DEFAULT false,
+	"forbidden" boolean DEFAULT false,
+	"translation" text
 );
 --> statement-breakpoint
 DO $$ BEGIN

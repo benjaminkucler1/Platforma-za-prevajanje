@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { LanguageEnum } from "$lib/types/enums";
+import { LanguageTargetEnum } from "$lib/types/enums";
 import { getEnumValues } from "$lib/utils";
 
 
@@ -25,7 +25,7 @@ export const zUserProfileSchema = z.object({
         message: "School should contain at least 2 characters"
     }),
     birthday: z.string().optional(),
-    firstLang: z.enum(getEnumValues(LanguageEnum)).optional()
+    firstLanguage: z.enum(getEnumValues(LanguageTargetEnum)).optional()
 });
 
 export type ZUserProfileSchema = typeof zUserProfileSchema;

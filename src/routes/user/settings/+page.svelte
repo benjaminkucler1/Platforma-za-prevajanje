@@ -9,7 +9,7 @@
 	import { zUserProfileSchema } from '$lib/validation/user';
 	import SuperDebug from 'sveltekit-superforms';
 	import type { PageData } from '../$types';
-	import { LanguageEnum } from '$lib/types/enums';
+	import { LanguageTargetEnum } from '$lib/types/enums';
 	import { getEnumValues } from '$lib/utils';
 	import { Trigger } from '$lib/components/ui/alert-dialog';
 
@@ -22,10 +22,10 @@
 	const { form: formData, enhance } = form;
 
 
-	$: selectedFirstLang = $formData.firstLang
+	$: selectedFirstLanguage = $formData.firstLanguage
     ? {
-        label: $formData.firstLang,
-        value: $formData.firstLang
+        label: $formData.firstLanguage,
+        value: $formData.firstLanguage
       }
     : undefined;
 </script>
@@ -112,24 +112,24 @@
 		</div>
 
 		<div class="form-group">
-			<Form.Field {form} name="firstLang">
+			<Form.Field {form} name="firstLanguage">
 				<Form.Control let:attrs>
 					<Form.Label>First Language</Form.Label>
 					<Select.Root
-						selected = {selectedFirstLang}
+						selected = {selectedFirstLanguage}
 						onSelectedChange={(v) => {
-							v && ($formData.firstLang = v.value);
+							v && ($formData.firstLanguage = v.value);
 						  }}>
 						  <Select.Trigger {...attrs}>
 							<Select.Value placeholder="Select a first language" />
 						  </Select.Trigger>
 						  <Select.Content>
-							{#each getEnumValues(LanguageEnum) as option}
+							{#each getEnumValues(LanguageTargetEnum) as option}
 								<Select.Item value="{option}" label="{option}" />
 							{/each}
 						  </Select.Content>
 					</Select.Root>
-					<input hidden bind:value={$formData.firstLang} name={attrs.name} />
+					<input hidden bind:value={$formData.firstLanguage} name={attrs.name} />
 				</Form.Control>
 				<Form.Description>This is your first language.</Form.Description>
 				<Form.FieldErrors />

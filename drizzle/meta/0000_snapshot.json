@@ -1,5 +1,5 @@
 {
-  "id": "6dda36b4-28eb-44f3-a8ad-3aad178e934c",
+  "id": "b9e4666e-36c9-42b2-8a73-df8dbbd6fa0c",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -206,16 +206,16 @@
           "primaryKey": false,
           "notNull": true
         },
-        "langFrom": {
-          "name": "langFrom",
-          "type": "language",
+        "sourceLanguage": {
+          "name": "sourceLanguage",
+          "type": "sourceLanguage",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
         },
-        "langTo": {
-          "name": "langTo",
-          "type": "language",
+        "targetLanguage": {
+          "name": "targetLanguage",
+          "type": "targetLanguage",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
@@ -404,7 +404,7 @@
         },
         "language": {
           "name": "language",
-          "type": "language",
+          "type": "targetLanguage",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": false
@@ -514,9 +514,9 @@
           "primaryKey": false,
           "notNull": false
         },
-        "firstLang": {
-          "name": "firstLang",
-          "type": "language",
+        "firstLanguage": {
+          "name": "firstLanguage",
+          "type": "targetLanguage",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": false
@@ -627,9 +627,23 @@
           "notNull": false,
           "default": false
         },
-        "currentLDistance": {
-          "name": "currentLDistance",
-          "type": "integer",
+        "reviewed": {
+          "name": "reviewed",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "forbidden": {
+          "name": "forbidden",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "translation": {
+          "name": "translation",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         }
@@ -665,14 +679,36 @@
         "completed"
       ]
     },
-    "public.language": {
-      "name": "language",
+    "public.sourceLanguage": {
+      "name": "sourceLanguage",
       "schema": "public",
       "values": [
-        "si",
-        "en",
         "de",
-        "it"
+        "el",
+        "en",
+        "fr",
+        "it",
+        "nb",
+        "sk",
+        "sl",
+        "sv"
+      ]
+    },
+    "public.targetLanguage": {
+      "name": "targetLanguage",
+      "schema": "public",
+      "values": [
+        "de",
+        "el",
+        "en",
+        "en-gb",
+        "en-us",
+        "fr",
+        "it",
+        "nb",
+        "sk",
+        "sl",
+        "sv"
       ]
     },
     "public.userStatus": {

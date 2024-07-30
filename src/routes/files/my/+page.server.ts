@@ -3,6 +3,7 @@ import type { PageServerLoad } from './$types';
 import {
     abandonFile,
 	deleteFile,
+	deleteUserFileByFileId,
 	deleteWordsByFileId,
 	getFilesByOwner,
 	getFilesByUserNormal,
@@ -17,7 +18,7 @@ import { zod } from 'sveltekit-superforms/adapters';
 import { zFileCreateSchema } from '$lib/validation/file';
 import { withFiles } from 'sveltekit-superforms';
 import { message, setError, fail } from 'sveltekit-superforms';
-import { XMLParser } from '$lib/utils';
+import { calculateProgress, XMLParser } from '$lib/utils';
 import type { UserFileIds } from '$lib/types/interfaces';
 
 
@@ -65,14 +66,12 @@ export const actions: Actions = {
 		if (form.data.name == '') {
 			form.data.name = form.data.file.name;
 		}
-
-		const fileId = await insertFile(form.data);
-
-		//console.log(form.data.file);
 		const file = form.data.file as File;
 		const content = await file.text();
 		const words = XMLParser(content);
-		console.log(words);
+		const progress = calculateProgress(words);
+		form.data.progress = progress;
+		const fileId = await insertFile(form.data);
 		insertWords(words, fileId);
 
 		//return message(form, 'Posted OK!');
@@ -87,6 +86,7 @@ export const actions: Actions = {
 		if (fileId) {
             console.log(fileId);
 			deleteWordsByFileId(fileId);
+			deleteUserFileByFileId(fileId);
 			deleteFile(fileId);
 		}
 	},
