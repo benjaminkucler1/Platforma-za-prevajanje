@@ -23,11 +23,8 @@ export const updateForbiddenWords = (words: Word[], forbiddenWords: string[]) =>
 export const updateReviewRequired = (words: Word[], maxDistance: number): Word[] => {
     return words.map(word => {
         const distance = levenshteinEditDistance(word.value, word.translation);
-        console.log(word.value)
-            console.log(distance)
         if (distance > maxDistance) {
-            word.reviewRequired = true;
-            
+            word.reviewRequired = true;     
         }
         return word;
     });
