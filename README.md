@@ -20,6 +20,8 @@ export const updateForbiddenWords = (words: Word[], forbiddenWords: string[]) =>
 }
 ```
 ```js
+import { levenshteinEditDistance } from 'levenshtein-edit-distance';
+
 export const updateReviewRequired = (words: Word[], maxDistance: number): Word[] => {
     return words.map(word => {
         const distance = levenshteinEditDistance(word.value, word.translation);
@@ -28,6 +30,26 @@ export const updateReviewRequired = (words: Word[], maxDistance: number): Word[]
         }
         return word;
     });
+}
+```
+
+```js
+function checkWords(words: Word[], forbiddenWords: string[], maxDistance: number): Word[] {
+    let updatedWords = updateForbiddenWords(words, forbiddenWords);
+    
+    // Filter out forbidden words before updating review required
+    const nonForbiddenWords = updatedWords.filter(word => !word.forbidden);
+    const reviewedWords = updateReviewRequired(nonForbiddenWords, maxDistance);
+    
+    // Merge the updated non-forbidden words back into the original list
+    reviewedWords.forEach(updatedWord => {
+        const index = updatedWords.findIndex(word => word.id === updatedWord.id);
+        if (index !== -1) {
+            updatedWords[index] = updatedWord;
+        }
+    });
+
+    return updatedWords;
 }
 ```
 https://www.npmjs.com/package/levenshtein-edit-distance
