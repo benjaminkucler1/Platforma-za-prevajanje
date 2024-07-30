@@ -3,7 +3,7 @@ import postgres from "postgres";
 import { drizzle } from "drizzle-orm/postgres-js";
 import type { AdapterAccountType } from "@auth/core/adapters";
 
-export const languageEnum = pgEnum('language', ['si', 'en', 'de', 'it']); // todo
+export const languageEnum = pgEnum('language', [’bg’, ‘cs’, ‘da’, ‘de’, ‘el’, ‘en-gb’, ‘en-us’, ‘es’, ‘et’, ‘fi’, ‘fr’, ‘hu’, ‘id’, ‘it’, ‘ja’, ‘ko’, ‘lt’, ‘lv’, ‘nb’, ‘nl’, ‘pl’, ‘pt-br’, ‘pt-pt’, ‘ro’, ‘ru’, ‘sk’, ‘sl’, ‘sv’, ‘tr’, ‘uk’, ‘zh’, ‘zh-hans’]); // todo
 export const userStatusEnum = pgEnum('userStatus', ['novice', 'intermediate', 'expert']);
 export const fileStatusEnum = pgEnum('fileStatus', ['obtainable', 'obtained', 'in_review', 'completed']);
 export const userTypeEnum = pgEnum('userType', ['admin', 'normal', 'client']) // todo POPRAVI
