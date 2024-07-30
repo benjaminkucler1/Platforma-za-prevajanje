@@ -8,3 +8,5 @@ export const calculateProgress = (words: WordPair[]) => {
     return percentage;
 }
 ```
+
+https://www.npmjs.com/package/levenshtein-edit-distance
