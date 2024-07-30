@@ -8,7 +8,16 @@ export const calculateProgress = (words: WordPair[]) => {
     return percentage;
 }
 ```
-
+```js
+export const updateForbiddenWords = (words: Word[], forbiddenWords: string[]) =>{
+    return words.map(word => {
+        if (forbiddenWords.includes(word.value)) {
+            return { ...word, forbidden: true };
+        }
+        return word;
+    });
+}
+```
 https://www.npmjs.com/package/levenshtein-edit-distance
 
 https://www.deepl.com/en/your-account/subscription
