@@ -1,0 +1,9 @@
+<resources>
+    <string name="Save">Shrani</string>
+    <string name="Edit"></string>
+    <string name="Do you want to continue?"></string>
+    <string name="Exit"></string>
+    <string name="You can't cancel this. Would you like to continue?"></string>
+    <string name="Arrow-left"></string>
+    <string name="Options"></string>
+</resources>
