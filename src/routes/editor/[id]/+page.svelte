@@ -47,7 +47,7 @@
 			<Table.Body>
 				{#each $formData.words as word, index}
 					<Table.Row>
-						<Table.Cell>
+                        <Table.Cell>
 							{#if $formData.words[index].value == ''}
 								<CircleDashed size={28} color="#317e15" strokeWidth={1.5} />
 							{:else if $formData.words[index].forbidden}

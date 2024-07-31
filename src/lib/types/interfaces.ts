@@ -1,3 +1,5 @@
+import type { LanguageSourceEnum, LanguageTargetEnum } from "./enums";
+
 export interface UserDataUpdate {
     name: string;
     phone?: string;
@@ -25,4 +27,10 @@ export interface WordPair {
 export interface UserFileIds {
     userId: string;
     fileId: number;
+}
+
+export interface WordTranslateData{
+    value: string;
+    sourceLanguage: string;
+    targetLanguage: string;
 }

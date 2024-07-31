@@ -18,8 +18,10 @@ import { zod } from 'sveltekit-superforms/adapters';
 import { zFileCreateSchema } from '$lib/validation/file';
 import { withFiles } from 'sveltekit-superforms';
 import { message, setError, fail } from 'sveltekit-superforms';
-import { calculateProgress, XMLParser } from '$lib/utils';
-import type { UserFileIds } from '$lib/types/interfaces';
+import { calculateProgress, concatWithDots, XMLParser } from '$lib/utils';
+import type { UserFileIds, WordTranslateData } from '$lib/types/interfaces';
+import * as deepl from 'deepl-node';
+import { DEEPL_SECRET } from '$env/static/private';
 
 
 const isNormal = async (email: string) => {
@@ -69,11 +71,23 @@ export const actions: Actions = {
 		const file = form.data.file as File;
 		const content = await file.text();
 		const words = XMLParser(content);
+		let wordsForTranslation: WordTranslateData[] = []; 
+		words.forEach(word => {
+			let wf: WordTranslateData = {
+				value: word.name,
+				sourceLanguage: form.data.sourceLanguage,
+				targetLanguage: form.data.targetLanguage
+			}
+			wordsForTranslation.push(wf);
+		});
+		translateWords(wordsForTranslation.length != 0 ? wordsForTranslation : undefined);
+		
+/*
 		const progress = calculateProgress(words);
 		form.data.progress = progress;
 		const fileId = await insertFile(form.data);
 		insertWords(words, fileId);
-
+*/
 		//return message(form, 'Posted OK!');
 		//return setError(form, 'file', 'Could not process file');
 
@@ -108,3 +122,21 @@ export const actions: Actions = {
         }
     }
 };
+
+
+const translateWords = async (words?: WordTranslateData[]) => {
+	if (words == undefined){
+		return;
+	}
+
+	const translator = new deepl.Translator(DEEPL_SECRET);
+
+	for (let i = 0; i < words.length; i += 3) {
+		const chunk = words.slice(i, i + 3).map(word => word.value);
+		
+		let apiString = concatWithDots(chunk);
+		console.log(apiString)
+	  }
+
+	//const result = await translator.translateText("WORD.VALUE", "en", "sl");
+}

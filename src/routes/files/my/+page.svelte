@@ -84,7 +84,7 @@
 				<Dialog.Title>New file</Dialog.Title>
 				<Dialog.Description>Add file here.</Dialog.Description>
 			</Dialog.Header>
-			<SuperDebug data={$formData} />
+			<!--<SuperDebug data={$formData} />-->
 			<form method="POST" enctype="multipart/form-data" action="?/addFile" use:enhance>
 				<div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
 					<div class="form-group col-span-2">

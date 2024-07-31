@@ -87,9 +87,24 @@ export const XMLParser = (XMLString: string, tagName = 'string'): WordPair[] => 
 
 //PROGRESS
 export const calculateProgress = (words: WordPair[]) => {
-    if (words.length === 0) return 0;
+	if (words.length === 0) return 0;
 
-    const filledCount = words.filter(word => word.value !== "").length;
-    const percentage = Math.round((filledCount / words.length) * 100);
-    return percentage;
-}
+	const filledCount = words.filter((word) => word.value !== '').length;
+	const percentage = Math.round((filledCount / words.length) * 100);
+	return percentage;
+};
+
+//CONCAT
+export const concatWithDots = (words: string[]) => {
+	return words.reduce((acc, str) => {
+	  // Replace any dot inside the string with "(.)" but not at the end
+	  const modifiedStr = str.replace(/\.(?=\S)/g, '()');
+  
+	  // Concatenate the string with a dot in between, unless acc ends with a dot
+	  if (acc.endsWith('.')) {
+		return acc + modifiedStr;
+	  } else {
+		return acc + '.' + modifiedStr;
+	  }
+	});
+  };
