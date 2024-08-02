@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { fail } from '@sveltejs/kit';
 import type { FileCreateData, UserDataUpdate, UserFileIds, WordValues } from '$lib/types/interfaces';
 import { FileStatusEnum, LanguageSourceEnum, LanguageTargetEnum } from '$lib/types/enums';
+import type { WordType } from './typeUtils';
 
 //user
 export async function emailExists(email: string) {
@@ -186,6 +187,14 @@ export async function insertWords(words: WordValues[], fileId: number) {
 		console.error(err);
 		return fail(500);
 	}
+}
+
+export async function updateWords(words: WordType[]){
+	for (const word of words) {
+        await db.update(wordTable)
+            .set(word)
+            .where(eq(wordTable.id, word.id));
+    }
 }
 
 //USER_FILE

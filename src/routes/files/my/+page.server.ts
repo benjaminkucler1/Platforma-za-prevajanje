@@ -52,7 +52,53 @@ export const load: PageServerLoad = async ({ locals }) => {
 	};
 };
 
-export const actions: Actions = {
+interface TranslationResult {
+	text: string;
+  }
+  
+  const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+  
+  const translateWords = async (words?: WordTranslateData[]): Promise<string[]> => {
+	if (!words) {
+	  return [];
+	}
+  
+	const translator = new deepl.Translator(DEEPL_SECRET);
+	let resultArray: string[] = [];
+	const chunkSize = 3; // Number of words to translate in one request
+	const delay = 1000; // Delay between API calls in milliseconds
+	const timeout = 10000; // Timeout for API call in milliseconds
+  
+	const translateChunk = async (chunk: string[]): Promise<string[]> => {
+	  try {
+		const apiString = concatWithDots(chunk);
+		console.log(`Translating chunk: ${apiString}`);
+		const result = await Promise.race<TranslationResult>([
+		  translator.translateText(apiString, null, "sl"),
+		  new Promise<TranslationResult>((_, reject) =>
+			setTimeout(() => reject(new Error("Request timeout")), timeout)
+		  )
+		]);
+		console.log(`Translated text: ${result.text}`);
+		return splitAndReplace(result.text);
+	  } catch (error) {
+		console.error("Error translating chunk:", chunk, error);
+		return [];
+	  }
+	};
+  
+	for (let i = 0; i < words.length; i += chunkSize) {
+	  const chunk = words.slice(i, i + chunkSize).map(word => word.value);
+	  const splitResult = await translateChunk(chunk);
+	  resultArray = resultArray.concat(splitResult);
+	  await sleep(delay); // Delay to avoid rate limiting
+	}
+  
+	console.log("Translation complete");
+	return resultArray;
+  };
+
+  export const actions: Actions = {
 	addFile: async (event) => {
 		const session = await event.locals.auth();
 		const email: string = session!.user!.email!;
@@ -124,50 +170,3 @@ export const actions: Actions = {
         }
     }
 };
-
-
-interface TranslationResult {
-	text: string;
-  }
-  
-  const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-  
-  const translateWords = async (words?: WordTranslateData[]): Promise<string[]> => {
-	if (!words) {
-	  return [];
-	}
-  
-	const translator = new deepl.Translator(DEEPL_SECRET);
-	let resultArray: string[] = [];
-	const chunkSize = 3; // Number of words to translate in one request
-	const delay = 1000; // Delay between API calls in milliseconds
-	const timeout = 10000; // Timeout for API call in milliseconds
-  
-	const translateChunk = async (chunk: string[]): Promise<string[]> => {
-	  try {
-		const apiString = concatWithDots(chunk);
-		console.log(`Translating chunk: ${apiString}`);
-		const result = await Promise.race<TranslationResult>([
-		  translator.translateText(apiString, null, "sl"),
-		  new Promise<TranslationResult>((_, reject) =>
-			setTimeout(() => reject(new Error("Request timeout")), timeout)
-		  )
-		]);
-		console.log(`Translated text: ${result.text}`);
-		return splitAndReplace(result.text);
-	  } catch (error) {
-		console.error("Error translating chunk:", chunk, error);
-		return [];
-	  }
-	};
-  
-	for (let i = 0; i < words.length; i += chunkSize) {
-	  const chunk = words.slice(i, i + chunkSize).map(word => word.value);
-	  const splitResult = await translateChunk(chunk);
-	  resultArray = resultArray.concat(splitResult);
-	  await sleep(delay); // Delay to avoid rate limiting
-	}
-  
-	console.log("Translation complete");
-	return resultArray;
-  };

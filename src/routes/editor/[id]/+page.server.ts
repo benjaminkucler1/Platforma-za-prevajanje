@@ -1,9 +1,12 @@
-import { getUserIdByEmail, getUserTypeByEmail, getWordsByFileId } from "$lib/db/queries";
+import { getUserIdByEmail, getUserTypeByEmail, getWordsByFileId, updateWords } from "$lib/db/queries";
 import { redirect, type Actions } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 import { superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
 import { zWordsSchema } from "$lib/validation/word";
+import type { WordValues } from "$lib/types/interfaces";
+import { checkWords } from "$lib/securityCheck";
+import type { WordType } from "$lib/db/typeUtils";
 
 const isNormal = async (email: string) => {
 	const userRole = await getUserTypeByEmail(email);
@@ -43,6 +46,20 @@ export const actions: Actions = {
 
         const form = await superValidate(event, zod(zWordsSchema));
 
-        console.log(form.data);
+        const words: WordType[] = form.data.words.map(word =>({
+            id: word.id,
+            name: word.name,
+            value: word.value ?? "",
+            fileId: word.fileId,
+            reviewRequired: word.reviewRequired,
+            reviewed: word.reviewed,
+            forbidden: word.forbidden,
+            translation: word.translation ?? ""
+        }));
+
+        const forbiddenWords = ["drek", "gej"];
+
+        const checkedWords = checkWords(words, forbiddenWords, 4);
+        updateWords(checkedWords);
     }
 }

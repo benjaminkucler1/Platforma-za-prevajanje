@@ -13,6 +13,7 @@
 	import { getEnumValues } from '$lib/utils';
 	import { LanguageSourceEnum, LanguageTargetEnum } from '$lib/types/enums';
 	import * as Table from '$lib/components/ui/table';
+	import { goto } from "$app/navigation";
 
 	export let data: PageData;
 
@@ -36,7 +37,12 @@
 			}
 		: undefined;
 
-	const file = fileProxy(form, 'file');
+	const file = fileProxy(form, 'file');	
+			
+
+	function handleEditClick(fileId: number) {
+    goto(`/editor/${fileId}`);
+  }
 
 </script>
 
@@ -61,10 +67,9 @@
 			<Table.Cell>{file.progress}%</Table.Cell>
 			<Table.Cell>{file.status}</Table.Cell>
 			<Table.Cell>
-				<form method="post" action="">
-					<input type="hidden" name="fileId" value={file.id} />
-					<Button type="submit" disabled>Edit</Button>
-				</form>
+				<div>
+					<Button type="button" on:click={() => handleEditClick(file.id)}>Edit</Button>
+				  </div>
 			</Table.Cell>
 			<Table.Cell>
 				<form method="post" action="?/abandonFile">

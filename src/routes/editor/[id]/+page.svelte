@@ -75,7 +75,7 @@
 							/></Table.Cell
 						>
 						{#if $formData.words[index].reviewRequired && !$formData.words[index].reviewed}
-							<Table.Cell><Button>Confirm</Button></Table.Cell>
+							<Table.Cell><Button on:click>Confirm</Button></Table.Cell>
 						{/if}
 						<Table.Cell><Button>Reviewed</Button></Table.Cell>
 					</Table.Row>
