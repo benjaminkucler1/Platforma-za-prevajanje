@@ -3,7 +3,7 @@ import { twMerge } from 'tailwind-merge';
 import { cubicOut } from 'svelte/easing';
 import type { TransitionConfig } from 'svelte/transition';
 import { DOMParser } from '@xmldom/xmldom';
-import type { WordPair } from './types/interfaces';
+import type { WordValues } from './types/interfaces';
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -68,11 +68,11 @@ export function getEnumValues<T extends object>(enumObj: T): readonly [string, .
 
 //XML PARSER
 
-export const XMLParser = (XMLString: string, tagName = 'string'): WordPair[] => {
+export const XMLParser = (XMLString: string, tagName = 'string'): WordValues[] => {
 	//contect: XMLString, featuring tag <string> with name attribute and value
 	const parser = new DOMParser();
 	const xmlData = parser.parseFromString(XMLString, 'application/xml');
-	const result: WordPair[] = [];
+	const result: WordValues[] = [];
 
 	const strings = xmlData.getElementsByTagName(tagName);
 	for (let i = 0; i < strings.length; i++) {
@@ -86,7 +86,7 @@ export const XMLParser = (XMLString: string, tagName = 'string'): WordPair[] => 
 };
 
 //PROGRESS
-export const calculateProgress = (words: WordPair[]) => {
+export const calculateProgress = (words: WordValues[]) => {
 	if (words.length === 0) return 0;
 
 	const filledCount = words.filter((word) => word.value !== '').length;
@@ -97,8 +97,8 @@ export const calculateProgress = (words: WordPair[]) => {
 //CONCAT
 export const concatWithDots = (words: string[]) => {
 	return words.reduce((acc, str) => {
-	  // Replace any dot inside the string with "(.)" but not at the end
-	  const modifiedStr = str.replace(/\.(?=\S)/g, '()');
+	  // Replace any dot inside the string with "()" but not at the end
+	  const modifiedStr = str.replace(/\.(?!$)/g, '()');
   
 	  // Concatenate the string with a dot in between, unless acc ends with a dot
 	  if (acc.endsWith('.')) {
@@ -107,4 +107,13 @@ export const concatWithDots = (words: string[]) => {
 		return acc + '.' + modifiedStr;
 	  }
 	});
+  };
+  export const splitAndReplace = (input: string): string[] => {
+	// Split the string by dots
+	const splitStrings = input.split('.');
+  
+	// Replace all occurrences of "()" with "." in each substring
+	const modifiedStrings = splitStrings.map(str => str.replace(/\(\)/g, '.'));
+  
+	return modifiedStrings;
   };

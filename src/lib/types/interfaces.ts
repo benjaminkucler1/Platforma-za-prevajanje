@@ -19,9 +19,10 @@ export interface FileCreateData {
     progress?: number;
 }
 
-export interface WordPair {
+export interface WordValues {
     name: string;
     value: string;
+    translation?: string;
 }
 
 export interface UserFileIds {

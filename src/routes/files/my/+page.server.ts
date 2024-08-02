@@ -18,7 +18,7 @@ import { zod } from 'sveltekit-superforms/adapters';
 import { zFileCreateSchema } from '$lib/validation/file';
 import { withFiles } from 'sveltekit-superforms';
 import { message, setError, fail } from 'sveltekit-superforms';
-import { calculateProgress, concatWithDots, XMLParser } from '$lib/utils';
+import { calculateProgress, concatWithDots, splitAndReplace, XMLParser } from '$lib/utils';
 import type { UserFileIds, WordTranslateData } from '$lib/types/interfaces';
 import * as deepl from 'deepl-node';
 import { DEEPL_SECRET } from '$env/static/private';
@@ -71,6 +71,8 @@ export const actions: Actions = {
 		const file = form.data.file as File;
 		const content = await file.text();
 		const words = XMLParser(content);
+		const progress = calculateProgress(words);
+		form.data.progress = progress;
 		let wordsForTranslation: WordTranslateData[] = []; 
 		words.forEach(word => {
 			let wf: WordTranslateData = {
@@ -80,14 +82,14 @@ export const actions: Actions = {
 			}
 			wordsForTranslation.push(wf);
 		});
-		translateWords(wordsForTranslation.length != 0 ? wordsForTranslation : undefined);
+		let translations = await translateWords(wordsForTranslation.length != 0 ? wordsForTranslation : undefined);
+		for (let i = 0; i < words.length; i+=1){
+			words[i].translation = translations[i];
+		}
 		
-/*
-		const progress = calculateProgress(words);
-		form.data.progress = progress;
 		const fileId = await insertFile(form.data);
 		insertWords(words, fileId);
-*/
+
 		//return message(form, 'Posted OK!');
 		//return setError(form, 'file', 'Could not process file');
 
@@ -124,19 +126,48 @@ export const actions: Actions = {
 };
 
 
-const translateWords = async (words?: WordTranslateData[]) => {
-	if (words == undefined){
-		return;
+interface TranslationResult {
+	text: string;
+  }
+  
+  const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+  
+  const translateWords = async (words?: WordTranslateData[]): Promise<string[]> => {
+	if (!words) {
+	  return [];
 	}
-
+  
 	const translator = new deepl.Translator(DEEPL_SECRET);
-
-	for (let i = 0; i < words.length; i += 3) {
-		const chunk = words.slice(i, i + 3).map(word => word.value);
-		
-		let apiString = concatWithDots(chunk);
-		console.log(apiString)
+	let resultArray: string[] = [];
+	const chunkSize = 3; // Number of words to translate in one request
+	const delay = 1000; // Delay between API calls in milliseconds
+	const timeout = 10000; // Timeout for API call in milliseconds
+  
+	const translateChunk = async (chunk: string[]): Promise<string[]> => {
+	  try {
+		const apiString = concatWithDots(chunk);
+		console.log(`Translating chunk: ${apiString}`);
+		const result = await Promise.race<TranslationResult>([
+		  translator.translateText(apiString, null, "sl"),
+		  new Promise<TranslationResult>((_, reject) =>
+			setTimeout(() => reject(new Error("Request timeout")), timeout)
+		  )
+		]);
+		console.log(`Translated text: ${result.text}`);
+		return splitAndReplace(result.text);
+	  } catch (error) {
+		console.error("Error translating chunk:", chunk, error);
+		return [];
 	  }
-
-	//const result = await translator.translateText("WORD.VALUE", "en", "sl");
-}
+	};
+  
+	for (let i = 0; i < words.length; i += chunkSize) {
+	  const chunk = words.slice(i, i + chunkSize).map(word => word.value);
+	  const splitResult = await translateChunk(chunk);
+	  resultArray = resultArray.concat(splitResult);
+	  await sleep(delay); // Delay to avoid rate limiting
+	}
+  
+	console.log("Translation complete");
+	return resultArray;
+  };

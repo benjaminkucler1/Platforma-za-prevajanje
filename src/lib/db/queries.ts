@@ -3,7 +3,7 @@ import { db } from './db.server';
 import { fileTable, userFileTable, userTable, wordTable } from './schema';
 import { v4 as uuidv4 } from 'uuid';
 import { fail } from '@sveltejs/kit';
-import type { FileCreateData, UserDataUpdate, UserFileIds, WordPair } from '$lib/types/interfaces';
+import type { FileCreateData, UserDataUpdate, UserFileIds, WordValues } from '$lib/types/interfaces';
 import { FileStatusEnum, LanguageSourceEnum, LanguageTargetEnum } from '$lib/types/enums';
 
 //user
@@ -172,11 +172,12 @@ export async function getWordsByFileId(fileId: number){
 	return words;
 }
 
-export async function insertWords(words: WordPair[], fileId: number) {
+export async function insertWords(words: WordValues[], fileId: number) {
 	try {
 		const wordRecords = words.map(word =>({
 			name: word.name,
 			value: word.value,
+			translation: word.translation,
 			fileId: fileId
 		}));
 
