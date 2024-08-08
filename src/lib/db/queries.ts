@@ -164,6 +164,11 @@ export async function deleteWordsByFileId(fileId: number){
 	await db.delete(wordTable)
 		.where(eq(wordTable.fileId, fileId));
 }
+export async function confirmWord(wordId: number) {
+	await db.update(wordTable)
+		.set({reviewed: true})
+		.where(eq(wordTable.id, wordId));
+}
 
 export async function getWordsByFileId(fileId: number){
 	const words = await db.query.wordTable.findMany({

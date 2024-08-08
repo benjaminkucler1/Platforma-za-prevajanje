@@ -1,9 +1,9 @@
-import { getUserIdByEmail, getUserTypeByEmail, getWordsByFileId, updateWords } from "$lib/db/queries";
+import { confirmWord, getUserIdByEmail, getUserTypeByEmail, getWordsByFileId, updateWords } from "$lib/db/queries";
 import { redirect, type Actions } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 import { superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
-import { zWordsSchema } from "$lib/validation/word";
+import { zWordIdSchema, zWordsSchema } from "$lib/validation/word";
 import type { WordValues } from "$lib/types/interfaces";
 import { checkWords } from "$lib/securityCheck";
 import type { WordType } from "$lib/db/typeUtils";
@@ -39,6 +39,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
     };
 };
 
+
 export const actions: Actions = {
     saveWords: async (event) => {
         const session = await event.locals.auth();
@@ -61,5 +62,10 @@ export const actions: Actions = {
 
         const checkedWords = checkWords(words, forbiddenWords, 4);
         updateWords(checkedWords);
+    },
+    confirmWord: async ({locals, request}) =>{
+        const formData = await request.formData();
+        const wordId = Number(formData.get('wordId'));
+        await confirmWord(wordId);
     }
 }

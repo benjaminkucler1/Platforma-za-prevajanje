@@ -15,4 +15,9 @@ export const zWordsSchema = z.object({
 	)
 });
 
+export const zWordIdSchema = z.object({
+	id: z.number()
+});
+
+export type zWordIdSchema = typeof zWordIdSchema;
 export type ZWordsSchema = typeof zWordsSchema;
