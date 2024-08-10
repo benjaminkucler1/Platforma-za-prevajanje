@@ -13,7 +13,7 @@
 	import { getEnumValues } from '$lib/utils';
 	import { LanguageSourceEnum, LanguageTargetEnum } from '$lib/types/enums';
 	import * as Table from '$lib/components/ui/table';
-	import { goto } from "$app/navigation";
+	import { goto } from '$app/navigation';
 
 	export let data: PageData;
 
@@ -37,50 +37,78 @@
 			}
 		: undefined;
 
-	const file = fileProxy(form, 'file');	
-			
+	const file = fileProxy(form, 'file');
 
 	function handleEditClick(fileId: number) {
-    goto(`/editor/${fileId}`);
-  }
+		goto(`/editor/${fileId}`);
+	}
 
+	let fileId: number;
+	async function downloadXML() {
+        const form = new FormData();
+		const fileId = (document.getElementById("fileId") as HTMLInputElement).value;
+        form.append('fileId', fileId);
+		
+        try {
+            const response = await fetch('/files/my/', {
+                method: 'POST',
+                body: form,
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to download XML');
+            }
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'strings.xml';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
 </script>
 
 {#if data.normal}
-<Table.Root>
-	<Table.Caption>Files that you are editing</Table.Caption>
-	<Table.Header>
-		<Table.Row>
-			<Table.Head>Name</Table.Head>
-			<Table.Head>Source language</Table.Head>
-			<Table.Head>Target language</Table.Head>
-			<Table.Head>Progress</Table.Head>
-			<Table.Head>Status</Table.Head>
-		</Table.Row>
-	</Table.Header>
-	<Table.Body>
-		{#each data.userObtainedFiles as file}
-		<Table.Row>
-			<Table.Cell>{file.name}</Table.Cell>
-			<Table.Cell>{file.sourceLanguage}</Table.Cell>
-			<Table.Cell>{file.targetLanguage}</Table.Cell>
-			<Table.Cell>{file.progress}%</Table.Cell>
-			<Table.Cell>{file.status}</Table.Cell>
-			<Table.Cell>
-				<div>
-					<Button type="button" on:click={() => handleEditClick(file.id)}>Edit</Button>
-				  </div>
-			</Table.Cell>
-			<Table.Cell>
-				<form method="post" action="?/abandonFile">
-					<input type="hidden" name="fileId" value={file.id} />
-					<Button type="submit" variant="destructive">Abandon</Button>
-				</form>
-			</Table.Cell>
-		</Table.Row>
-		{/each}
-	</Table.Body>
-</Table.Root>
+	<Table.Root>
+		<Table.Caption>Files that you are editing</Table.Caption>
+		<Table.Header>
+			<Table.Row>
+				<Table.Head>Name</Table.Head>
+				<Table.Head>Source language</Table.Head>
+				<Table.Head>Target language</Table.Head>
+				<Table.Head>Progress</Table.Head>
+				<Table.Head>Status</Table.Head>
+			</Table.Row>
+		</Table.Header>
+		<Table.Body>
+			{#each data.userObtainedFiles as file}
+				<Table.Row>
+					<Table.Cell>{file.name}</Table.Cell>
+					<Table.Cell>{file.sourceLanguage}</Table.Cell>
+					<Table.Cell>{file.targetLanguage}</Table.Cell>
+					<Table.Cell>{file.progress}%</Table.Cell>
+					<Table.Cell>{file.status}</Table.Cell>
+					<Table.Cell>
+						<div>
+							<Button type="button" on:click={() => handleEditClick(file.id)}>Edit</Button>
+						</div>
+					</Table.Cell>
+					<Table.Cell>
+						<form method="post" action="?/abandonFile">
+							<input type="hidden" name="fileId" value={file.id} />
+							<Button type="submit" variant="destructive">Abandon</Button>
+						</form>
+					</Table.Cell>
+				</Table.Row>
+			{/each}
+		</Table.Body>
+	</Table.Root>
 {:else}
 	<Dialog.Root>
 		<Dialog.Trigger><Button>Upload a new file</Button></Dialog.Trigger>
@@ -178,20 +206,26 @@
 		</Table.Header>
 		<Table.Body>
 			{#each data.userFiles as file}
-			<Table.Row>
-				<Table.Cell>{file.name}</Table.Cell>
-				<Table.Cell>{file.sourceLanguage}</Table.Cell>
-				<Table.Cell>{file.targetLanguage}</Table.Cell>
-				<Table.Cell>{file.progress}%</Table.Cell>
-				<Table.Cell>{file.status}</Table.Cell>
-				<Table.Cell>{file.createdOn}</Table.Cell>
-				<Table.Cell>
-					<form method="post" action="?/removeFile">
-						<input type="hidden" name="fileId" value={file.id} />
-						<Button type="submit" variant="destructive">Remove</Button>
-					</form>
-				</Table.Cell>
-			</Table.Row>
+				<Table.Row>
+					<Table.Cell>{file.name}</Table.Cell>
+					<Table.Cell>{file.sourceLanguage}</Table.Cell>
+					<Table.Cell>{file.targetLanguage}</Table.Cell>
+					<Table.Cell>{file.progress}%</Table.Cell>
+					<Table.Cell>{file.status}</Table.Cell>
+					<Table.Cell>{file.createdOn}</Table.Cell>
+					<Table.Cell>
+						<form method="post" action="?/removeFile">
+							<input type="hidden" name="fileId" value={file.id} />
+							<Button type="submit" variant="destructive">Remove</Button>
+						</form>
+					</Table.Cell>
+					<Table.Cell>
+						<div>
+							<input type="hidden" id="fileId" name="fileId" value={file.id} />
+							<Button on:click={downloadXML}>Download</Button>
+						</div>
+					</Table.Cell>
+				</Table.Row>
 			{/each}
 		</Table.Body>
 	</Table.Root>

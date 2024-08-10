@@ -30,7 +30,9 @@
 		</div>
 	{:else}
 		<div class="flex gap-4 items-center">
-			
+			<a href="/files/my">My Files</a>
+			<a href="/files/obtainable">Obtainable Files</a>
+			<a href="/user/settings">Profile</a>
 			<div class="flex items-center gap-2">
 				<img class="h-12 w-12" src={$page.data.session.user?.image} alt="User Profile" />
 				<div class="flex flex-col">

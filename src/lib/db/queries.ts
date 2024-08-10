@@ -65,7 +65,7 @@ export async function updateUserData(email: string, data: UserDataUpdate) {
 				school: data.school,
 				birthday: data.birthday,
 				firstLanguage: data.firstLanguage as LanguageTargetEnum,
-				emptySettings: false
+				emptySettings: false,
 			})
 			.where(eq(userTable.email, email));
 	} catch (err) {
@@ -156,6 +156,12 @@ export async function obtainFile(data: UserFileIds){
 	await db.update(fileTable)
 		.set({ currentUserId: data.userId, status: FileStatusEnum.OBTAINED })
 		.where(eq(fileTable.id, data.fileId));
+}
+
+export async function updateProgress(fileId: number, progress: number){
+	await db.update(fileTable)
+		.set({progress: progress})
+		.where(eq(fileTable.id, fileId));
 }
 
 

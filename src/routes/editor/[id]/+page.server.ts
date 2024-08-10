@@ -1,4 +1,4 @@
-import { confirmWord, getUserIdByEmail, getUserTypeByEmail, getWordsByFileId, updateWords } from "$lib/db/queries";
+import { confirmWord, getUserIdByEmail, getUserTypeByEmail, getWordsByFileId, updateProgress, updateWords } from "$lib/db/queries";
 import { redirect, type Actions } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 import { superValidate } from "sveltekit-superforms";
@@ -7,6 +7,7 @@ import { zWordIdSchema, zWordsSchema } from "$lib/validation/word";
 import type { WordValues } from "$lib/types/interfaces";
 import { checkWords } from "$lib/securityCheck";
 import type { WordType } from "$lib/db/typeUtils";
+import { calculateProgress } from "$lib/utils";
 
 const isNormal = async (email: string) => {
 	const userRole = await getUserTypeByEmail(email);
@@ -61,6 +62,16 @@ export const actions: Actions = {
         const forbiddenWords = ["drek", "gej"];
 
         const checkedWords = checkWords(words, forbiddenWords, 4);
+        let w: WordValues[] = [];
+        for(let i = 0; i <checkedWords.length; i+=1){
+            let word: WordValues = {
+                name: checkedWords[i].name,
+                value: checkedWords[i].value ?? ""
+            }
+        }
+        const progress = calculateProgress(w);
+        updateProgress(checkedWords[0].fileId, progress);
+
         updateWords(checkedWords);
     },
     confirmWord: async ({locals, request}) =>{
