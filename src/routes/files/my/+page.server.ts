@@ -2,6 +2,7 @@ import { redirect, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import {
     abandonFile,
+	completeFile,
 	deleteFile,
 	deleteUserFileByFileId,
 	deleteWordsByFileId,
@@ -9,6 +10,7 @@ import {
 	getFilesByUserNormal,
 	getUserIdByEmail,
 	getUserTypeByEmail,
+	improveUserRating,
 	insertFile,
 	insertWords,
     setAbandonedDate
@@ -168,5 +170,14 @@ interface TranslationResult {
             abandonFile(data.fileId);
             setAbandonedDate(data);
         }
-    }
+    },
+	completeFile: async ({ request }) => {
+		const formData = await request.formData();
+		const fileId = Number(formData.get('fileId'));
+		const currentUserId = String(formData.get('currentUserId'));
+
+		completeFile(fileId);
+		if (currentUserId)
+			improveUserRating(currentUserId, 1);
+	}
 };

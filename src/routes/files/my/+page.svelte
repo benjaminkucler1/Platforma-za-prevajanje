@@ -225,6 +225,13 @@
 							<Button on:click={downloadXML}>Download</Button>
 						</div>
 					</Table.Cell>
+					<Table.Cell>
+						<form method="post" action="?/completeFile">
+							<input type="hidden" name="fileId" value={file.id} />
+							<input type="hidden" name="currentUserId" value={file.currentUserId} />
+							<Button type="submit">Complete</Button>
+						</form>
+					</Table.Cell>
 				</Table.Row>
 			{/each}
 		</Table.Body>

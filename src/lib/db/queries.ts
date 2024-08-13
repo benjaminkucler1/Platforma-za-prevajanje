@@ -1,4 +1,4 @@
-import { and, asc, desc, eq } from 'drizzle-orm';
+import { and, asc, desc, eq, not } from 'drizzle-orm';
 import { db } from './db.server';
 import { fileTable, userFileTable, userTable, wordTable } from './schema';
 import { v4 as uuidv4 } from 'uuid';
@@ -14,6 +14,20 @@ export async function emailExists(email: string) {
 	});
 
 	return user;
+}
+
+export async function improveUserRating(currentUserId: string, addToRating: number) {
+	const user = await db.query.userTable.findFirst({
+		where: eq(userTable.id, currentUserId)
+	});
+	if (!user) return;
+	const newRating: number = user.rating ?? 0 + addToRating;
+
+	await db.update(userTable)
+		.set({
+			rating: newRating
+		})
+		.where(eq(userTable.id, currentUserId))
 }
 
 export async function getUserEmptySettings(email: string) {
@@ -126,7 +140,7 @@ export async function getFilesByOwner(userId: string) {
 }
 export async function getFilesByUserNormal(userId: string) {
 	const userFiles = await db.query.fileTable.findMany({
-		where: eq(fileTable.currentUserId, userId),
+		where: and(eq(fileTable.currentUserId, userId), not(eq(fileTable.status, FileStatusEnum.COMPLETED))),
 		orderBy: [desc(fileTable.progress), desc(fileTable.createdOn)]
 	})
 
@@ -161,6 +175,14 @@ export async function obtainFile(data: UserFileIds){
 export async function updateProgress(fileId: number, progress: number){
 	await db.update(fileTable)
 		.set({progress: progress})
+		.where(eq(fileTable.id, fileId));
+}
+
+export async function completeFile(fileId: number){
+	await db.update(fileTable)
+		.set({
+			status: FileStatusEnum.COMPLETED
+		})
 		.where(eq(fileTable.id, fileId));
 }
 
