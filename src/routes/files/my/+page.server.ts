@@ -76,7 +76,7 @@ interface TranslationResult {
 		const apiString = concatWithDots(chunk);
 		console.log(`Translating chunk: ${apiString}`);
 		const result = await Promise.race<TranslationResult>([
-		  translator.translateText(apiString, null, "sl"),
+		  translator.translateText(apiString, null, "es"),
 		  new Promise<TranslationResult>((_, reject) =>
 			setTimeout(() => reject(new Error("Request timeout")), timeout)
 		  )

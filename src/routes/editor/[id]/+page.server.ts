@@ -61,7 +61,7 @@ export const actions: Actions = {
 
         const forbiddenWords = ["drek", "gej"];
 
-        const checkedWords = checkWords(words, forbiddenWords, 4);
+        const checkedWords = checkWords(words, forbiddenWords, 5);
         let w: WordValues[] = [];
         for(let i = 0; i <checkedWords.length; i+=1){
             let word: WordValues = {
